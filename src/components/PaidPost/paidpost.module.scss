@@ -1,0 +1,65 @@
+.paid-post-container {
+    padding: 16px;
+  
+    // Header section with title and navigation
+    .header {
+      display: flex;
+      justify-content: space-between; /* Title on the left, arrows on the right */
+      align-items: center; /* Vertically align items */
+      margin-bottom: 16px;
+  
+      .title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+  
+      .navigation {
+        display: flex;
+        gap: 10px; /* Add spacing between arrows */
+  
+        .arrow {
+          background: none;
+          border: 1px solid #d9d9d9;
+          border-radius: 4px;
+          padding: 4px 12px;
+          cursor: pointer;
+          font-size: 16px;
+          transition: all 0.3s ease;
+  
+          &:hover {
+            background-color: #f0f0f0;
+          }
+        }
+      }
+    }
+  
+    // Carousel spacing and styling
+    .ant-carousel .slick-slide {
+      padding: 8px; /* Adds gap between cards */
+    }
+  
+    .card-wrapper {
+      width: 100%; /* Ensure cards take full width */
+    }
+  
+    .ant-card {
+      text-align: center;
+    }
+  
+    // Responsive styling
+    @media (max-width: 768px) {
+      .ant-carousel .slick-slide {
+        padding: 0; /* Remove gaps for mobile */
+      }
+  
+      .header {
+        flex-direction: column; /* Stack title and navigation vertically */
+        align-items: flex-start; /* Align to the start on small screens */
+        .navigation {
+          margin-top: 8px;
+          justify-content: flex-end; /* Keep arrows aligned to the right */
+        }
+      }
+    }
+  }
+  

@@ -1,0 +1,59 @@
+.sidebarFilters {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+  
+    .filterGroup {
+      margin-bottom: 20px;
+  
+      .filterTitle {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+  
+      .checkboxLabel,
+      .radioLabel {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 14px;
+  
+        input {
+          margin-right: 8px;
+        }
+      }
+  
+      .selectInput {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    }
+  
+    .applyButton {
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+  
+      &:hover {
+        background-color: #145a9e;
+      }
+    }
+  }
+  

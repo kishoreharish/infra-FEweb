@@ -1,0 +1,65 @@
+/* TopBar container */
+.topbar {
+  background-color: white; /* White background */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+
+  /* Desktop menu items */
+  .topbar__menu-items {
+    display: flex;
+    gap: 20px;
+
+    .topbar__menu-item {
+      color: rgb(55, 55, 55); /* Hard grey font color */
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+
+      &:hover {
+        color: black; /* Slightly darker color on hover */
+      }
+    }
+  }
+
+  /* Logo/Brand */
+  .topbar__logo {
+    font-weight: bold;
+    color: gray; /* Hard grey font color */
+    text-decoration: none;
+
+    &:hover {
+      color: black; /* Hover effect for brand text */
+    }
+  }
+}
+
+/* Hamburger Menu for mobile */
+.topbar__hamburger {
+  display: none; /* Hide by default (visible on small screens) */
+  color: gray;
+
+  @media (max-width: 600px) {
+    display: block;
+  }
+}
+
+/* Drawer Menu */
+.drawer {
+  width: 250px;
+  padding: 10px;
+
+  .drawer__menu-item {
+    color: gray;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 10px 0;
+
+    &:hover {
+      color: black; /* Darker color on hover */
+    }
+  }
+}

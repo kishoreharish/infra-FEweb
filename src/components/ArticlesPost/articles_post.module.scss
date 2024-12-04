@@ -1,0 +1,47 @@
+.articleSection {
+    margin: 40px 0; // Add spacing around the section
+  
+    .articleTitle {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: left;
+      margin-bottom: 20px;
+      color: #333; // Title color
+    }
+  }
+  
+  .articleContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; // Space between cards
+    justify-content: center; // Center cards
+  }
+  
+  .articleCardLink {
+    text-decoration: none;
+  }
+  
+  .articleCard {
+    width: 240px;
+    border-radius: 8px;
+    overflow: hidden;
+  
+    .ant-card-cover img {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+  
+    &:hover {
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); // Slight shadow on hover
+      transform: translateY(-5px); // Subtle lift on hover
+      transition: all 0.3s ease;
+    }
+  }
+  
+  .articleImage {
+    height: 120px; // Reduced height
+    object-fit: cover; // Maintain aspect ratio and crop to fit
+    border-top-left-radius: 8px; // Match card border radius
+    border-top-right-radius: 8px;
+  }
+  

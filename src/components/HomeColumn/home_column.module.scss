@@ -1,0 +1,50 @@
+.container {
+    display: flex; /* Horizontal layout */
+    width: 100%;
+    gap: 10px; /* Space between columns */
+    padding: 20px; /* Padding for container */
+    box-sizing: border-box;
+  
+    @media (max-width: 768px) {
+      flex-direction: column; /* Stack columns vertically on smaller screens */
+      gap: 15px; /* Increase spacing for vertical layout */
+    }
+  }
+  
+  .leftColumn,
+  .centerColumn,
+  .rightColumn {
+    padding: 15px; /* Padding inside each column */
+    background-color: #f9f9f9; /* Light background for contrast */
+    border: 1px solid #ddd; /* Light border for separation */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  .leftColumn {
+    flex: 1; /* Adjust for proportional width */
+    max-width: 20%; /* Limit to 20% width on large screens */
+  
+    @media (max-width: 768px) {
+      max-width: 100%; /* Full width on smaller screens */
+    }
+  }
+  
+  .centerColumn {
+    flex: 3; /* Center column takes up 60% */
+    max-width: 60%; /* Limit to 60% width on large screens */
+  
+    @media (max-width: 768px) {
+      max-width: 100%; /* Full width on smaller screens */
+    }
+  }
+  
+  .rightColumn {
+    flex: 1; /* Adjust for proportional width */
+    max-width: 20%; /* Limit to 20% width on large screens */
+  
+    @media (max-width: 768px) {
+      max-width: 100%; /* Full width on smaller screens */
+    }
+  }
+  

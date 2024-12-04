@@ -1,0 +1,90 @@
+.jobOfTheDay {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .navTabs {
+      display: flex;
+
+      .tab {
+        padding: 8px 15px;
+        border: 1px solid transparent;
+        background: #f4f4f4;
+        border-radius: 4px;
+        margin-right: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background: #eaeaea;
+        }
+
+        &.active {
+          background: #1976d2;
+          color: #ffffff;
+          border-color: #1976d2;
+        }
+      }
+    }
+  }
+
+  .jobList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    .jobCard {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      flex: 1 1 calc(33.333% - 15px); /* Adjust width for 3-column layout */
+      max-width: 18%; /* Ensure the card doesn't overflow */
+      box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+
+      h4 {
+        font-size: 14px;
+        margin: 0 0 10px;
+        color: #333;
+      }
+
+      p {
+        font-size: 12px;
+        color: #555;
+        margin: 0;
+      }
+
+      &:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .jobCard {
+        flex: 1 1 calc(50% - 15px); /* Two-column layout on medium screens */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .jobCard {
+        flex: 1 1 100%; /* Single column on smaller screens */
+        max-width: 100%; /* Ensure it doesn't overflow */
+      }
+    }
+  }
+}
