@@ -6,24 +6,26 @@ import FeaturedJobsCarousel from "../Featured_Jobs_carousel/featuredjobscarousel
 import ImageCarouselAds from "../ImageCarouselAds/image_carousel_ads";
 import ArticlePost from "../ArticlesPost/articles_post";
 import PaidPost from "../PaidPost/paidpost";
+import FullCard from "../FullCard/fullcard";
 
 const HomeColumn = () => {
   return (
-    <div className={styles.container}>
-      <div className={styles.leftColumn}>
-        <JobFilter />
-        
-      </div>
-      <div className={styles.centerColumn}>
-        <JobOfTheDay />
-        <FeaturedJobsCarousel />
-        <ImageCarouselAds />
-        <ArticlePost />
-        <PaidPost />
-        
-      </div>
-      <div className={styles.rightColumn}>
-        <p>Right Column (20%)</p>
+    <div className={styles.containerWrapper}>
+      <div className={styles.container}>
+        <div className={styles.leftColumn}>
+          <JobFilter />
+        </div>
+        <div className={styles.centerColumn}>
+          <JobOfTheDay />
+          <FeaturedJobsCarousel />
+          <ImageCarouselAds />
+          <ArticlePost />
+          <PaidPost />
+          <FullCard />
+        </div>
+        <div className={styles.rightColumn}>
+          <p>Right Column (20%)</p>
+        </div>
       </div>
     </div>
   );

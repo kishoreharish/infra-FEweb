@@ -1,65 +1,122 @@
-/* TopBar container */
-.topbar {
-  background-color: white; /* White background */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for separation */
+.appBar {
+  background-color: #ffffff !important; /* White background */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.outerContainer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center; /* Center contents horizontally */
+  width: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between; /* Spread items within the toolbar */
+  align-items: center; /* Vertically center items */
+  width: 100%;
+  max-width: 1200px; /* Limit width for large screens */
   padding: 0 20px;
 
-  /* Desktop menu items */
-  .topbar__menu-items {
-    display: flex;
-    gap: 20px;
-
-    .topbar__menu-item {
-      color: rgb(55, 55, 55); /* Hard grey font color */
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-
-      &:hover {
-        color: black; /* Slightly darker color on hover */
-      }
-    }
+  @media (max-width: 768px) {
+    padding: 0 15px; /* Slightly reduce padding for medium screens */
   }
 
-  /* Logo/Brand */
-  .topbar__logo {
-    font-weight: bold;
-    color: gray; /* Hard grey font color */
-    text-decoration: none;
-
-    &:hover {
-      color: black; /* Hover effect for brand text */
-    }
+  @media (max-width: 480px) {
+    padding: 0 10px; /* Reduce padding for smaller screens */
   }
 }
 
-/* Hamburger Menu for mobile */
-.topbar__hamburger {
-  display: none; /* Hide by default (visible on small screens) */
-  color: gray;
+.logo {
+  font-weight: bold;
+  color: #3b3b3b;
+}
 
-  @media (max-width: 600px) {
-    display: block;
+.menu {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    display: none; /* Hide menu on smaller screens */
   }
 }
 
-/* Drawer Menu */
+.menuItem {
+  font-weight: 500;
+  color: #3b3b3b;
+  cursor: pointer;
+
+  &:hover {
+    color: black;
+  }
+}
+
+.buttonOutline {
+  border-color: #636363;
+  color: #3b3b3b;
+  font-weight: 500;
+  text-transform: none;
+
+  &:hover {
+    border-color: black;
+    color: black;
+  }
+}
+
+.buttonContained {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 500;
+  text-transform: none;
+
+  &:hover {
+    background-color: #115293;
+  }
+}
+
+.hamburger {
+  display: none !important; /* Ensure it's hidden on large screens */
+
+  @media (max-width: 768px) {
+    display: block !important; /* Ensure it's visible only on smaller screens */
+    color: gray;
+  }
+}
+
+
 .drawer {
   width: 250px;
   padding: 10px;
+}
 
-  .drawer__menu-item {
-    color: gray;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    padding: 10px 0;
+.closeIcon {
+  color: gray;
+}
 
-    &:hover {
-      color: black; /* Darker color on hover */
-    }
+.drawerItem {
+  color: #636363;
+  font-weight: 500;
+}
+
+.drawerButtonOutline {
+  border-color: #636363;
+  color: #636363;
+  width: 100%;
+  text-transform: none;
+
+  &:hover {
+    border-color: black;
+    color: black;
+  }
+}
+
+.drawerButtonContained {
+  background-color: #1976d2;
+  color: white;
+  width: 100%;
+  text-transform: none;
+
+  &:hover {
+    background-color: #115293;
   }
 }

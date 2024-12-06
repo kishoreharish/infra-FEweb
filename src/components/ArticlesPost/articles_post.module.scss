@@ -1,47 +1,68 @@
 .articleSection {
-    margin: 40px 0; // Add spacing around the section
-  
+  padding-top: 20px;
+
+  .articleHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
     .articleTitle {
       font-size: 24px;
       font-weight: bold;
-      text-align: left;
-      margin-bottom: 20px;
-      color: #333; // Title color
+      margin: 0;
+    }
+
+    .carouselArrows {
+      display: flex;
+      gap: 0px;
+
+      .arrow {
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 5px;
+
+        &:hover {
+          color: #1976d2; /* Highlight on hover */
+        }
+      }
     }
   }
-  
-  .articleContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; // Space between cards
-    justify-content: center; // Center cards
+
+  .carouselContainer {
+    .articleCard {
+      margin: 5px;
+      transition: transform 0.3s;
+      height: 260px;
+      padding: 0px; /* Reduced padding inside the card */
+
+      &:hover {
+        transform: scale(1.02); /* Slight zoom on hover */
+      }
+
+      .ant-card-meta-title {
+        font-size: 14px; /* Adjust the title font size */
+      }
+
+      .ant-card-meta-description {
+        font-size: 8px; /* Adjust the description font size */
+      }
+    }
+
+    .slick-prev,
+    .slick-next {
+      display: none; /* Default arrows are hidden */
+    }
   }
-  
+
   .articleCardLink {
     text-decoration: none;
-  }
-  
-  .articleCard {
-    width: 240px;
-    border-radius: 8px;
-    overflow: hidden;
-  
-    .ant-card-cover img {
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-    }
-  
-    &:hover {
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); // Slight shadow on hover
-      transform: translateY(-5px); // Subtle lift on hover
-      transition: all 0.3s ease;
+
+    img {
+      width: 100%;
+      height: 120px;
     }
   }
-  
-  .articleImage {
-    height: 120px; // Reduced height
-    object-fit: cover; // Maintain aspect ratio and crop to fit
-    border-top-left-radius: 8px; // Match card border radius
-    border-top-right-radius: 8px;
-  }
-  
+}

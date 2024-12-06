@@ -1,50 +1,79 @@
+/* Wrapper for the entire container */
+.container-wrapper {
+  display: flex;
+  justify-content: center; /* Centers the container horizontally */
+  width: 100%; /* Full width for the wrapper */
+  padding: 20px 0 0 20px; /* Add 20px top padding for the entire container */
+}
+
+/* Main container for columns */
 .container {
-    display: flex; /* Horizontal layout */
-    width: 100%;
-    gap: 10px; /* Space between columns */
-    padding: 20px; /* Padding for container */
-    box-sizing: border-box;
-  
-    @media (max-width: 768px) {
-      flex-direction: column; /* Stack columns vertically on smaller screens */
-      gap: 15px; /* Increase spacing for vertical layout */
-    }
+  display: flex;
+  justify-content: space-between; /* Space between columns */
+  width: 100%;
+  gap: 20px;
+  padding-top: 20px;
+
+  /* For larger screens, restrict content to a maximum width */
+  max-width: 1200px; /* Limit width to 1200px for large screens */
+  margin: 0 auto; /* Center the content horizontally */
+  padding-top: 20px; /* Top padding for larger screens */
+
+  /* For medium screens (e.g., laptops, tablets) */
+  @media (max-width: 1200px) {
+    width: 90%; /* Use 90% width for medium-sized screens */
+    max-width: 1200px; /* Don't stretch beyond this */
+    padding-top: 20px; /* Add padding at the top */
   }
-  
-  .leftColumn,
-  .centerColumn,
-  .rightColumn {
-    padding: 15px; /* Padding inside each column */
-    background-color: #f9f9f9; /* Light background for contrast */
-    border: 1px solid #ddd; /* Light border for separation */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+
+  /* For small screens (e.g., mobile, small tablets) */
+  @media (max-width: 768px) {
+    flex-direction: column; /* Stack columns vertically */
+    gap: 20px;
+    max-width: 100%;
+    padding: 0 10px; /* Optional padding for small screens */
   }
-  
-  .leftColumn {
-    flex: 1; /* Adjust for proportional width */
-    max-width: 20%; /* Limit to 20% width on large screens */
-  
-    @media (max-width: 768px) {
-      max-width: 100%; /* Full width on smaller screens */
-    }
+}
+
+.leftColumn,
+.centerColumn,
+.rightColumn {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+.leftColumn {
+  flex: 1;
+  max-width: 20%; /* Left column takes 20% on large screens */
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on smaller screens */
   }
-  
-  .centerColumn {
-    flex: 3; /* Center column takes up 60% */
-    max-width: 60%; /* Limit to 60% width on large screens */
-  
-    @media (max-width: 768px) {
-      max-width: 100%; /* Full width on smaller screens */
-    }
+}
+
+.centerColumn {
+  flex: 3;
+  max-width: 60%; /* Center column takes 60% on large screens */
+  width: 100%; /* Full width on smaller screens */
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on smaller screens */
   }
-  
-  .rightColumn {
-    flex: 1; /* Adjust for proportional width */
-    max-width: 20%; /* Limit to 20% width on large screens */
-  
-    @media (max-width: 768px) {
-      max-width: 100%; /* Full width on smaller screens */
-    }
+}
+
+.rightColumn {
+  flex: 1;
+  max-width: 20%; /* Right column takes 20% on large screens */
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on smaller screens */
   }
-  
+}
+
+/* Fix horizontal scroll issue on mobile */
+html, body {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  margin: 0; /* Reset default margin */
+  padding: 0; /* Reset default padding */
+}

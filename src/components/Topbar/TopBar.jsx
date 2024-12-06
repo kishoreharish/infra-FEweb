@@ -11,8 +11,9 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu"; // Hamburger menu icon
-import CloseIcon from "@mui/icons-material/Close"; // Close icon for drawer
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import styles from "./Topbar.module.scss";
 
 const TopBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -21,153 +22,66 @@ const TopBar = () => {
     setDrawerOpen(!drawerOpen);
   };
 
-  const menuItems = ["Home", "Jobs", "Companies", "Services"]; // Main menu items
+  const menuItems = ["Home", "Jobs", "Companies", "Services"];
 
   return (
     <>
-      {/* AppBar */}
-      <AppBar
-        position="static"
-        sx={{
-          backgroundColor: "white", // White background
-          boxShadow: "0px 2px 5px rgba(0,0,0,0.1)", // Subtle shadow for better visibility
-        }}
-      >
-        <Toolbar sx={{ justifyContent: "space-between", alignItems: "center" }}>
-          {/* Logo or Brand */}
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              color: "#3B3B3B", // Hard grey color for text
-              fontWeight: "bold",
-            }}
-          >
-            JobPortal
-          </Typography>
+      <AppBar position="static" className={styles.appBar}>
+        <Box className={styles.outerContainer}>
+          <Toolbar className={styles.toolbar}>
+            {/* Logo */}
+            <Typography variant="h6" className={styles.logo}>
+              JobPortal
+            </Typography>
 
-          {/* Desktop Menu */}
-          <Box
-            sx={{
-              display: { xs: "none", sm: "flex" }, // Hidden on small screens
-              gap: 3,
-              alignItems: "center",
-            }}
-          >
-            {menuItems.map((item, index) => (
-              <Typography
-                key={index}
-                variant="body1"
-                sx={{
-                  cursor: "pointer",
-                  color: "#3B3B3B", // Hard grey font color for menu items
-                  fontWeight: "500",
-                  "&:hover": {
-                    color: "black", // Slightly darker grey on hover
-                  },
-                }}
-              >
-                {item}
-              </Typography>
-            ))}
+            {/* Desktop Menu */}
+            <Box className={styles.menu}>
+              {menuItems.map((item, index) => (
+                <Typography key={index} className={styles.menuItem}>
+                  {item}
+                </Typography>
+              ))}
+              <Button variant="outlined" className={styles.buttonOutline}>
+                Login / Signup
+              </Button>
+              <Button variant="contained" className={styles.buttonContained}>
+                Job Post
+              </Button>
+            </Box>
 
-            {/* Buttons */}
-            <Button
-              variant="outlined"
-              sx={{
-                borderColor: "#636363",
-                color: "#3B3B3B",
-                fontWeight: "500",
-                textTransform: "none", // Prevent uppercase transformation
-                "&:hover": {
-                  borderColor: "black",
-                  color: "black",
-                },
-              }}
+            {/* Hamburger Menu */}
+            <IconButton
+              edge="end"
+              onClick={handleDrawerToggle}
+              className={styles.hamburger}
             >
-              Login / Signup
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#1976d2", // Primary color for Employers button
-                color: "white",
-                fontWeight: "500",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "#115293", // Darker shade on hover
-                },
-              }}
-            >
-              Job Post
-            </Button>
-            
-          </Box>
-
-          {/* Hamburger Menu Icon */}
-          <IconButton
-            edge="end"
-            onClick={handleDrawerToggle}
-            sx={{ display: { sm: "none" }, color: "gray" }} // Grey icon for the hamburger
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </Box>
       </AppBar>
 
-      {/* Drawer for Hamburger Menu */}
+      {/* Drawer */}
       <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
-        <Box sx={{ width: 250, padding: 2 }}>
-          <IconButton onClick={handleDrawerToggle} sx={{ color: "gray" }}>
+        <Box className={styles.drawer}>
+          <IconButton onClick={handleDrawerToggle} className={styles.closeIcon}>
             <CloseIcon />
           </IconButton>
           <List>
             {menuItems.map((item, index) => (
               <ListItem button key={index} onClick={handleDrawerToggle}>
-                <ListItemText
-                  primary={item}
-                  primaryTypographyProps={{
-                    style: { color: "#636363", fontWeight: "500" }, // Grey font color for drawer menu items
-                  }}
-                />
+                <ListItemText primary={item} className={styles.drawerItem} />
               </ListItem>
             ))}
-            {/* Buttons in the Drawer */}
             <ListItem>
-              <Button
-                variant="outlined"
-                sx={{
-                  borderColor: "#636363",
-                  color: "#636363",
-                  width: "100%",
-                  textTransform: "none",
-                  "&:hover": {
-                    borderColor: "black",
-                    color: "black",
-                  },
-                }}
-              >
+              <Button variant="outlined" className={styles.drawerButtonOutline}>
                 Login / Signup
               </Button>
             </ListItem>
             <ListItem>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                  width: "100%",
-                  textTransform: "none",
-                  "&:hover": {
-                    backgroundColor: "#115293",
-                  },
-                }}
-              >
+              <Button variant="contained" className={styles.drawerButtonContained}>
                 Job Post
               </Button>
-            </ListItem>
-            <ListItem>
-              
             </ListItem>
           </List>
         </Box>
