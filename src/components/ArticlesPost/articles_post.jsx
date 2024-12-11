@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Card } from "antd";
-import Slider from "react-slick";
 import styles from "../ArticlesPost/articles_post.module.scss";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/swiper-bundle.css";
 
 const { Meta } = Card;
 
@@ -51,75 +53,74 @@ const articles = [
 ];
 
 const ArticlePost = () => {
-  const settings = {
-    dots: false, // No dots
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3.5, // Show 3.5 cards on larger screens
-    slidesToScroll: 1,
-    arrows: true, // Enable arrows
-    responsive: [
-      {
-        breakpoint: 1024, // Medium screens
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 600, // Small screens
-        settings: {
-          slidesToShow: 1, // Full width for smaller screens
-        },
-      },
-    ],
-  };
+  const swiperRef = useRef(null);
+
+  const handlePrev = () => swiperRef.current.swiper.slidePrev();
+  const handleNext = () => swiperRef.current.swiper.slideNext();
 
   return (
     <div className={styles.articleSection}>
       {/* Title with Navigation Arrows */}
       <div className={styles.articleHeader}>
-        <h2 className={styles.articleTitle}>Articles</h2>
-        <div className={styles.carouselArrows}>
-          <button
-            className={`${styles.arrow} ${styles.prevArrow}`}
-            onClick={() => document.querySelector(".slick-prev").click()}
-          >
-            &#9664;
+        <h4 className={styles.articleTitle}>Articles</h4>
+        <div className={styles.arrows}>
+          <button className={styles.arrow} onClick={handlePrev}>
+            &lt;
           </button>
-          <button
-            className={`${styles.arrow} ${styles.nextArrow}`}
-            onClick={() => document.querySelector(".slick-next").click()}
-          >
-            &#9654;
+          <button className={styles.arrow} onClick={handleNext}>
+            &gt;
           </button>
         </div>
       </div>
 
       {/* Articles Carousel */}
-      <Slider {...settings} className={styles.carouselContainer}>
-        {articles.map((article) => (
-          <a
-            href={article.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            key={article.id}
-            className={styles.articleCardLink}
-          >
-            <Card
-  hoverable
-  cover={<img alt={article.title} src={article.image} />}
-  className={`${styles.articleCard}`}
+      <Swiper
+  ref={swiperRef}
+  modules={[Navigation]}
+  spaceBetween={5}
+  slidesPerView={3}
+  loop={false}
+  breakpoints={{
+    1024: {
+      slidesPerView: 3,
+    },
+    768: {
+      slidesPerView: 2,
+    },
+    480: {
+      slidesPerView: 1,
+    },
+  }}
+  navigation={{
+    prevEl: `.slick-prev`,
+    nextEl: `.slick-next`,
+  }}
+  className={styles.carouselContainer}
 >
-  <Meta
-    title={article.title}
-    description={article.description}
-    className={styles.cardMeta}
-  />
-</Card>
+  {articles.map((article) => (
+    <SwiperSlide key={article.id}>
+      <a
+        href={article.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.articleCardLink}
+      >
+        <Card
+          hoverable
+          cover={<img alt={article.title} src={article.image} />}
+          className={styles.articleCard}
+        >
+          <Meta
+            title={article.title}
+            description={article.description}
+            className={styles.cardMeta}
+          />
+        </Card>
+      </a>
+    </SwiperSlide>
+  ))}
+</Swiper>
 
-          </a>
-        ))}
-      </Slider>
     </div>
   );
 };

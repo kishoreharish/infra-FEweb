@@ -1,6 +1,9 @@
+/* Topbar.module.scss */
+
 .appBar {
   background-color: #ffffff !important; /* White background */
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1200; /* Ensure this z-index is below the modal */
 }
 
 .outerContainer {
@@ -26,9 +29,16 @@
   }
 }
 
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
 .logo {
   font-weight: bold;
   color: #3b3b3b;
+  height: 40px; // Adjust the height as per your logo
+  width: auto;
 }
 
 .menu {
@@ -52,10 +62,13 @@
 }
 
 .buttonOutline {
-  border-color: #636363;
-  color: #3b3b3b;
-  font-weight: 500;
+  border-color: #1976d2;
+  color: #1976d2;
+  background-color: #ffffff;
+  font-weight: 600;
   text-transform: none;
+  width: 120px; /* Same width for consistency */
+  height: 40px; /* Same height for consistency */
 
   &:hover {
     border-color: black;
@@ -68,6 +81,8 @@
   color: white;
   font-weight: 500;
   text-transform: none;
+  width: 120px; /* Same width for consistency */
+  height: 40px; /* Same height for consistency */
 
   &:hover {
     background-color: #115293;
@@ -82,7 +97,6 @@
     color: gray;
   }
 }
-
 
 .drawer {
   width: 250px;
@@ -99,24 +113,58 @@
 }
 
 .drawerButtonOutline {
-  border-color: #636363;
-  color: #636363;
-  width: 100%;
+  border-color: #1976d2;
+  color: #1976d2;
+  border-radius: 4px;
+  background-color: #ffffff;
+  width: 120px; /* Same width for consistency */
+  height: 40px; /* Same height for consistency */
   text-transform: none;
 
   &:hover {
-    border-color: black;
-    color: black;
+    border-color: rgb(77, 77, 77);
+    color: rgb(77, 77, 77);
   }
 }
 
 .drawerButtonContained {
   background-color: #1976d2;
   color: white;
-  width: 100%;
+  width: 120px; /* Same width for consistency */
+  height: 40px; /* Same height for consistency */
   text-transform: none;
 
   &:hover {
     background-color: #115293;
   }
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
 }

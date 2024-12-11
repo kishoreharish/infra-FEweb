@@ -1,65 +1,161 @@
-.paid-post-container {
-    padding: 16px;
-  
-    // Header section with title and navigation
-    .header {
-      display: flex;
-      justify-content: space-between; /* Title on the left, arrows on the right */
-      align-items: center; /* Vertically align items */
-      margin-bottom: 16px;
-  
-      .title {
-        font-size: 18px;
-        font-weight: bold;
-      }
-  
-      .navigation {
-        display: flex;
-        gap: 10px; /* Add spacing between arrows */
-  
-        .arrow {
-          background: none;
-          border: 1px solid #d9d9d9;
-          border-radius: 4px;
-          padding: 4px 12px;
-          cursor: pointer;
-          font-size: 16px;
-          transition: all 0.3s ease;
-  
-          &:hover {
-            background-color: #f0f0f0;
-          }
-        }
-      }
-    }
-  
-    // Carousel spacing and styling
-    .ant-carousel .slick-slide {
-      padding: 18px; /* Adds gap between cards */
-    }
-  
-    .card-wrapper {
-      width: 100%; /* Ensure cards take full width */
-    }
-  
-    .ant-card {
-      text-align: center;
-    }
-  
-    // Responsive styling
-    @media (max-width: 768px) {
-      .ant-carousel .slick-slide {
-        padding: 0; /* Remove gaps for mobile */
-      }
-  
-      .header {
-        flex-direction: column; /* Stack title and navigation vertically */
-        align-items: flex-start; /* Align to the start on small screens */
-        .navigation {
-          margin-top: 8px;
-          justify-content: flex-end; /* Keep arrows aligned to the right */
-        }
+.paidJobs {
+  background-color: #f9f9f9;
+  padding: 0px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+  }
+
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .arrows {
+    display: flex;
+    gap: 10px; /* Spacing between arrows */
+
+    .arrow {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #333;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #f0f0f0;
       }
     }
   }
-  
+
+  .swiper {
+    display: flex;
+    gap: 20px;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+  }
+
+  .jobCard {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 320px;
+    padding: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    position: relative; /* For positioning the Save button */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .jobHeader {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .jobLogo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .jobTitle {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin: 0;
+    }
+
+    .company {
+      font-size: 12px;
+      color: #777;
+      margin: 5px 0;
+    }
+
+    .jobDescription {
+      font-size: 14px;
+      color: #666;
+      margin: 5px 0;
+    }
+
+    .jobLocation {
+      font-size: 14px;
+      color: #888;
+      margin: 5px 0;
+    }
+
+    .applyButton {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #1890ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      align-self: flex-end;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+
+    .saveButton {
+      position: absolute;
+      
+      font-size: 12px;
+      border: 1px solid #ddd;
+      color: #1890ff;
+      border-radius: 4px;
+      background: white;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #f0f0f0;
+        color: #0056b3;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .swiper {
+      display: block;
+    }
+
+    .jobCard {
+      max-width: 280px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .swiper {
+      display: block;
+    }
+
+    .jobCard {
+      max-width: 100%;
+      width: 384px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .swiper {
+      display: block;
+    }
+
+    .jobCard {
+      max-width: 100%;
+      width: 200px;
+    }
+  }
+}

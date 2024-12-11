@@ -1,69 +1,125 @@
 .featuredJobs {
-    padding: 0px;
-    background-color: #f9f9f9;
-    
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      text-align: left;
-      color: #333;
-    }
+  padding: 0px;
+  background-color: #f9f9f9;
+
+  .header {
+    display: flex;
+    justify-content: space-between; /* Align title and arrows */
+    align-items: center;
+    margin-bottom: 0px;
+  }
+
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
   
-    .jobCard {
-      background: #ffffff;
+
+  .arrows {
+    display: flex;
+    gap: 10px; /* Spacing between arrows */
+
+    .arrow {
+      background: none;
       border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      text-align: left;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+      border-radius: 4px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #333;
+      transition: all 0.3s ease;
+
       &:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
-  
-      .jobTitle {
-        font-size: 18px;
-        font-weight: bold;
-        color: #333;
-        margin: 0 0 10px;
-      }
-  
-      .company,
-      .location {
-        font-size: 14px;
-        color: #777;
-        margin: 0;
+        background-color: #f0f0f0;
       }
     }
-  
-    /* Responsive design */
-    @media (max-width: 1024px) {
-      .jobCard {
-        padding: 15px;
-      }
+    
+  }
+
+  .swiper-container {
+    /* Ensure the Swiper container itself takes full width */
+    width: 100%;
+  }
+
+  .swiper-slide {
+    /* Make sure each slide (job card) has a flexible width */
+    display: flex;
+    justify-content: center; /* Center the content in each slide */
+  }
+
+  .jobCard {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Ensure the card takes up full width in its container */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+
+  .jobTitle {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 5px;
+  }
+
+  .company,
+  .location {
+    font-size: 14px;
+    color: #777;
+    margin: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .jobCard {
+      padding: 15px;
     }
-  
-    @media (max-width: 768px) {
-      .title {
-        font-size: 20px;
-      }
-      
-      .jobCard {
-        padding: 10px;
-      }
+  }
+
+  @media (max-width: 768px) {
+    .jobCard {
+      padding: 15px;
+      width: 100%;
     }
-  
-    @media (max-width: 480px) {
-      .title {
-        font-size: 18px;
-      }
-  
-      .jobCard {
-        padding: 8px;
+    .title {
+      font-size: 16px;
+    }
+
+    .jobCard {
+      padding: 10px;
+    }
+
+    .slick-prev,
+    .slick-next {
+      display: none; /* Default arrows are hidden */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .jobCard {
+      padding: 15px;
+      width: 100%;
+    }
+    .title {
+      font-size: 18px;
+    }
+
+    .jobCard {
+      padding: 8px;
+    }
+
+    .arrows {
+      gap: 5px;
+
+      .arrow {
+        font-size: 12px;
+        padding: 2px 8px;
       }
     }
   }
-  
+}

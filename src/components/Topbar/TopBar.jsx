@@ -14,12 +14,23 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./Topbar.module.scss";
+import logo from "../../assets/images/infrajobs.jpg"; // Import the logo image
+import AuthComponents from "../AuthComponents/authcomponents"; // Import AuthComponents (ensure the path is correct)
 
 const TopBar = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state
+  const [showModal, setShowModal] = useState(false); // Modal state
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
+  };
+
+  const handleLoginClick = () => {
+    setShowModal(true); // Show modal when Login button is clicked
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Close modal
   };
 
   const menuItems = ["Home", "Jobs", "Companies", "Services"];
@@ -29,10 +40,9 @@ const TopBar = () => {
       <AppBar position="static" className={styles.appBar}>
         <Box className={styles.outerContainer}>
           <Toolbar className={styles.toolbar}>
-            {/* Logo */}
-            <Typography variant="h6" className={styles.logo}>
-              JobPortal
-            </Typography>
+            <Box className={styles.logoContainer}>
+              <img src={logo} alt="InfraJobs Logo" className={styles.logo} />
+            </Box>
 
             {/* Desktop Menu */}
             <Box className={styles.menu}>
@@ -41,9 +51,25 @@ const TopBar = () => {
                   {item}
                 </Typography>
               ))}
-              <Button variant="outlined" className={styles.buttonOutline}>
-                Login / Signup
-              </Button>
+
+              {/* Login Button */}
+              <button
+                variant="outlined"
+                className={styles.drawerButtonOutline}
+                onClick={handleLoginClick}
+              >
+                Login / Sign Up
+              </button>
+
+              {/* Modal */}
+              {showModal && (
+                <div className={styles.modalOverlay} onClick={handleCloseModal}>
+                  <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                    <AuthComponents closeModal={handleCloseModal} />
+                  </div>
+                </div>
+              )}
+
               <Button variant="contained" className={styles.buttonContained}>
                 Job Post
               </Button>
@@ -74,9 +100,24 @@ const TopBar = () => {
               </ListItem>
             ))}
             <ListItem>
-              <Button variant="outlined" className={styles.drawerButtonOutline}>
-                Login / Signup
-              </Button>
+              {/* Login Button */}
+              <button
+                variant="outlined"
+                className={styles.drawerButtonOutline}
+                onClick={handleLoginClick}
+              >
+                Login / Sign Up
+              </button>
+
+              {/* Modal */}
+              {showModal && (
+                <div className={styles.modalOverlay} onClick={handleCloseModal}>
+                  <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                    
+                    <AuthComponents closeModal={handleCloseModal} />
+                  </div>
+                </div>
+              )}
             </ListItem>
             <ListItem>
               <Button variant="contained" className={styles.drawerButtonContained}>

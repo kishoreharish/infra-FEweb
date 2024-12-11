@@ -23,7 +23,7 @@ export default function FullCardList() {
   return (
     <Box sx={{ maxWidth: '1200px', margin: 'auto' }}>
       {/* Title for the List */}
-      <h2 className="title">Hot Jobs</h2>
+      <h3 className="title">Hot Listed Jobs</h3>
 
       {/* Card List */}
       <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">

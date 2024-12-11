@@ -31,24 +31,26 @@
     flex-direction: column; /* Stack columns vertically */
     gap: 20px;
     max-width: 100%;
-    padding: 0 10px; /* Optional padding for small screens */
+    padding: 10 10px; /* Optional padding for small screens */
   }
 }
 
 .leftColumn,
 .centerColumn,
 .rightColumn {
-  background-color: #f9f9f9;
+  background-color: #fcfcfc;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 16px;
+  
   box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 
 .leftColumn {
   flex: 1;
   max-width: 20%; /* Left column takes 20% on large screens */
+  padding-top: 0px;
   @media (max-width: 768px) {
     max-width: 100%; /* Full width on smaller screens */
   }
@@ -58,6 +60,7 @@
   flex: 3;
   max-width: 60%; /* Center column takes 60% on large screens */
   width: 100%; /* Full width on smaller screens */
+  padding-top: 16px;
   @media (max-width: 768px) {
     max-width: 100%; /* Full width on smaller screens */
   }
@@ -66,6 +69,7 @@
 .rightColumn {
   flex: 1;
   max-width: 20%; /* Right column takes 20% on large screens */
+  padding-top: 0px;
   @media (max-width: 768px) {
     max-width: 100%; /* Full width on smaller screens */
   }

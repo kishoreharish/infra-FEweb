@@ -24,7 +24,11 @@ const HomeColumn = () => {
           <FullCard />
         </div>
         <div className={styles.rightColumn}>
-          <p>Right Column (20%)</p>
+          <h4>Resume Builder</h4>
+          <h4>Saved Jobs</h4>
+          <h4>Suggested Jobs</h4>
+          <h4>Search Related Jobs</h4>
+          <h4>Salary Guide</h4>
         </div>
       </div>
     </div>

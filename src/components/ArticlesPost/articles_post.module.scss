@@ -1,5 +1,5 @@
 .articleSection {
-  padding-top: 20px;
+  padding-top: 0px;
 
   .articleHeader {
     display: flex;
@@ -8,24 +8,28 @@
     margin-bottom: 10px;
 
     .articleTitle {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: bold;
       margin: 0;
     }
 
-    .carouselArrows {
+    .arrows {
       display: flex;
-      gap: 0px;
-
+      gap: 10px; /* Spacing between arrows */
+  
       .arrow {
         background: none;
-        border: none;
-        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 4px 12px;
         cursor: pointer;
-        padding: 5px;
-
+        font-size: 14px;
+        
+        color: #333;
+        transition: all 0.3s ease;
+  
         &:hover {
-          color: #1976d2; /* Highlight on hover */
+          background-color: #f0f0f0;
         }
       }
     }
@@ -35,25 +39,39 @@
     .articleCard {
       margin: 5px;
       transition: transform 0.3s;
-      height: 260px;
-      padding: 0px; /* Reduced padding inside the card */
+      display: flex;
+      flex-direction: column; /* Stack child elements vertically */
+      justify-content: space-between; /* Ensure there's space between elements */
+      height: 260px; /* Fixed height */
+      width: 220px;
+      padding: 0px;
+      overflow: hidden; /* Ensure content stays within the fixed height */
+
+      /* Ensures the child content does not break the card height */
+      .ant-card-meta-title, .ant-card-meta-description {
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
       &:hover {
         transform: scale(1.02); /* Slight zoom on hover */
       }
 
       .ant-card-meta-title {
-        font-size: 14px; /* Adjust the title font size */
+        font-size: 14px; /* Title font size */
       }
 
       .ant-card-meta-description {
-        font-size: 8px; /* Adjust the description font size */
+        font-size: 8px; /* Description font size */
       }
     }
 
+    /* Hide default slick carousel arrows */
     .slick-prev,
     .slick-next {
-      display: none; /* Default arrows are hidden */
+      display: none;
     }
   }
 
@@ -62,7 +80,8 @@
 
     img {
       width: 100%;
-      height: 120px;
+      height: 120px; /* Ensure the image fits within the card */
+      object-fit: cover; /* Maintain aspect ratio and cover the area */
     }
   }
 }

@@ -1,0 +1,83 @@
+.verticalCarousel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  
+    /* Hide scrollbar for WebKit browsers */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+  }
+  
+  .card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px; /* Reduced inner padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  
+    @media (max-width: 768px) {
+      width: 100%;
+      max-width: 400px;
+    }
+  
+    @media (max-width: 480px) {
+      max-width: 360px;
+    }
+  }
+  
+  .logoTitleContainer {
+    display: flex;
+    align-items: center; /* Align items horizontally */
+    margin-bottom: 1px; /* Add space between logo and title */
+  }
+  
+  .logo {
+    margin-right: 12px; /* Space between logo and title */
+  
+    .logoImage {
+      width: 25px;
+      height: 25px;
+    }
+  }
+  
+  .cardTitle {
+    font-size: 1.0rem;
+    font-weight: bold;
+    margin: 0; /* Remove extra margin */
+  }
+  
+  .cardContent {
+    margin-top: 1px; /* Adjust spacing below the title */
+  }
+  
+  .cardDescription {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .rightArrow {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-size: 1.5rem;
+    color: #90caf9;
+    cursor: pointer;
+  
+    &:hover {
+      color: #1976d2;
+    }
+  }
+  
+  .noJobs {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+  }
+  

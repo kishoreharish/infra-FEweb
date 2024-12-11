@@ -1,60 +1,102 @@
 .sidebarFilters {
-    background-color: #f9f9f9;
-    // padding: 20px;
-    // border: 1px solid #ddd;
-    // border-radius: 8px;
-    // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   
-  
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-  
-    .filterGroup {
-      margin-bottom: 20px;
-  
-      .filterTitle {
-        font-size: 16px;
-        font-weight: 500;
-        margin-bottom: 10px;
-      }
-  
-      .checkboxLabel,
-      .radioLabel {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        font-size: 14px;
-  
-        input {
-          margin-right: 8px;
-        }
-      }
-  
-      .selectInput {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-    }
-  
-    .applyButton {
-      background-color: #1976d2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 15px;
-      font-size: 16px;
-      cursor: pointer;
-      text-align: center;
-      width: 100%;
-  
-      &:hover {
-        background-color: #145a9e;
-      }
+  background-color: #fcfcfc;
+  padding: 0px;
+
+  .filterHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 1px;
+  }
+
+  .collapseButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+
+    /* Hide the collapse button on larger screens */
+    @media (min-width: 1024px) {
+      display: none;
     }
   }
-  
+
+  .collapsedContent {
+    display: none;
+  }
+
+  .expandedContent {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 360px;
+  }
+
+  .filterGroup {
+    margin-bottom: 20px;
+
+    .filterTitle {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .checkboxLabel,
+    .radioLabel {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+
+      input {
+        margin-right: 8px;
+      }
+    }
+
+    .selectInput {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+
+  .applyButton {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+
+    &:hover {
+      background-color: #145a9e;
+    }
+  }
+
+  .viewMoreLink {
+    color: #1976d2;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 8px;
+    display: inline-block;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
