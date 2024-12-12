@@ -1,4 +1,3 @@
-// Import dependencies
 import React, { useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Correct import for CheckCircleIcon
@@ -6,10 +5,95 @@ import GoogleIcon from "@mui/icons-material/Google"; // Correct import for Googl
 import FacebookIcon from "@mui/icons-material/Facebook"; // Correct import for Facebook icon
 import styles from "./authcomponents.module.scss"; // Import the SCSS module
 import logo from "../../assets/images/infrajobs.jpg"; // Import the logo image
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { Link } from "react-router-dom";
+import { auth, googleProvider, facebookProvider } from "../../firebase/firebase-config"; // Import providers from Firebase config
 
 const AuthComponents = ({ closeModal }) => {
   const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [profileType, setProfileType] = useState(null); // State for profile type
+  const [error, setError] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(""); // New state for custom alert message
+
+  // Handle regular email/password login
+  const handleLogin = async () => {
+    if (!profileType) {
+      setAlertMessage("Please select a profile type (Candidate or Employer)."); // Set custom error message
+      return;
+    }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("User logged in");
+      closeModal(); // Close the modal on successful login
+    } catch (err) {
+      setError(err.message); // Show error message if login fails
+    }
+  };
+
+  // Handle regular sign up (email/password)
+  const handleSignUp = async () => {
+    if (!profileType) {
+      setAlertMessage("Please select a profile type (Candidate or Employer)."); // Set custom error message
+      return;
+    }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      console.log("User signed up", { email, profileType });
+      closeModal(); // Close the modal on successful sign up
+    } catch (err) {
+      setError(err.message); // Show error message if sign up fails
+    }
+  };
+
+  // Handle Google login via Firebase
+  const handleGoogleLogin = async () => {
+    if (!profileType) {
+      setAlertMessage("Please select a profile type (Candidate or Employer)."); // Set custom error message
+      return;
+    }
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log("Google User: ", user);
+      closeModal(); // Close the modal on successful login
+    } catch (error) {
+      setError(error.message); // Show error message if login fails
+    }
+  };
+
+  // Handle Facebook login via Firebase
+  const handleFacebookLogin = async () => {
+    if (!profileType) {
+      setAlertMessage("Please select a profile type (Candidate or Employer)."); // Set custom error message
+      return;
+    }
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
+      console.log("Facebook User: ", user);
+      closeModal(); // Close the modal on successful login
+    } catch (error) {
+      setError(error.message); // Show error message if login fails
+    }
+  };
+
+  {/* Profile Type Specific Text */}
+  {profileType === "Candidate" && (
+    <p className={styles.profileText}>
+      Ready to take the next step? Create an account or sign in. By creating an account or signing in, you understand and agree to Indeed's Terms. You also consent to our Cookie and Privacy policies. You will receive marketing messages from Indeed and may opt out at any time by following the unsubscribe link in our messages, or as detailed in our terms.
+    </p>
+  )}
+  {profileType === "Employer" && (
+    <p className={styles.profileText}>
+      Create your employer account or sign in with an existing account. By creating an account or signing in, you understand and agree to Indeed's Terms. You also consent to our Cookie and Privacy policies. You will receive marketing messages from Indeed and may opt out at any time by following the unsubscribe link in our messages, or as detailed in our terms.
+    </p>
+  )}
 
   return (
     <div className={styles.authContainer}>
@@ -31,67 +115,168 @@ const AuthComponents = ({ closeModal }) => {
         {showLogin ? (
           <div className={styles.authContent}>
             <h2 className={styles.loginText}>Login</h2>
-            <p className={styles.enterEmailText}>Enter your email and password to log in</p>
-            <input type="email" placeholder="Email" className={styles.inputField} />
+            <p className={styles.enterEmailText}>
+              Enter your email and password to log in
+            </p>
+
+            {/* Profile Type Selection */}
+            <div className={styles.profileTypeSelection}>
+              <label>
+                <input
+                  type="radio"
+                  name="profileType"
+                  value="Candidate"
+                  checked={profileType === "Candidate"}
+                  onChange={(e) => setProfileType(e.target.value)}
+                />
+                Candidate
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="profileType"
+                  value="Employer"
+                  checked={profileType === "Employer"}
+                  onChange={(e) => setProfileType(e.target.value)}
+                />
+                Employer
+              </label>
+            </div>
+
+            {alertMessage && <p className={styles.alertMessage}>{alertMessage}</p>} {/* Custom alert message */}
+            {error && <p className={styles.errorText}>{error}</p>}
+            <input
+              type="email"
+              placeholder="Email"
+              className={styles.inputField}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <input
               type="password"
               placeholder="Password"
               className={styles.inputField}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <button className={styles.loginBtn}>Login</button>
+            <button className={styles.loginBtn} onClick={handleLogin}>
+              Login
+            </button>
+
+            
 
             {/* Horizontal Line */}
             <hr className={styles.divider} />
 
             {/* Social Login Buttons */}
-            <button className={styles.socialButton1}>
+            <button
+              className={styles.socialButton1}
+              onClick={handleGoogleLogin}
+            >
               <GoogleIcon /> Login with Google
             </button>
-            <button className={styles.socialButton2}>
+            <button
+              className={styles.socialButton2}
+              onClick={handleFacebookLogin}
+            >
               <FacebookIcon /> Login with Facebook
             </button>
 
             {/* Link to switch back to Sign In */}
             <p className={styles.p}>
-              Don&apos;t have an account? {" "}
+              Don&apos;t have an account?{" "}
               <span
                 className={styles.link}
                 onClick={() => setShowLogin(false)}
               >
-                Sign up here
+                Sign Up here
               </span>
             </p>
           </div>
         ) : (
           <div className={styles.authContent}>
-            <h2 className={styles.signInText}>Sign In</h2>
+            <h2 className={styles.signInText}>Sign Up</h2>
             <p className={styles.enterEmailText}>
-              Enter your email to receive a one-time passcode
+              Enter your email, create a password, and select your profile type
             </p>
+
+            {/* Profile Type Selection */}
+            <div className={styles.profileTypeSelection}>
+              <label>
+                <input
+                  type="radio"
+                  name="profileType"
+                  value="Candidate"
+                  checked={profileType === "Candidate"}
+                  onChange={(e) => setProfileType(e.target.value)}
+                />
+                Candidate
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="profileType"
+                  value="Employer"
+                  checked={profileType === "Employer"}
+                  onChange={(e) => setProfileType(e.target.value)}
+                />
+                Employer
+              </label>
+            </div>
+
+            {/* Profile Type Specific Text */}
+            {profileType === "Candidate" && (
+              <p className={styles.profileText}>
+                By creating an account or signing in, you understand and agree to Badakar Terms. By using our services, you agree to our Cookie and Privacy policies.
+              </p>
+            )}
+            {profileType === "Employer" && (
+              <p className={styles.profileText}>
+                Create a new employer account or sign in with an existing one. By doing so, you agree to Badakar's Terms and consent to our Cookie and Privacy policies.
+              </p>
+            )}
+
+            {alertMessage && <p className={styles.alertMessage}>{alertMessage}</p>} {/* Custom alert message */}
+            {error && <p className={styles.errorText}>{error}</p>}
             <input
               type="email"
               placeholder="Email"
               className={styles.inputField}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <input
-              type="phone"
-              placeholder="Phone Number"
+              type="password"
+              placeholder="Password"
               className={styles.inputField}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <button className={styles.sendOtpBtn}>Send OTP Code</button>
+
+            <button className={styles.sendOtpBtn} onClick={handleSignUp}>
+              Sign Up
+            </button>
+
+            
 
             {/* Horizontal Line */}
             <hr className={styles.divider} />
 
-            <button className={styles.socialButton1}>
+            <button
+              className={styles.socialButton1}
+              onClick={handleGoogleLogin}
+            >
               <GoogleIcon /> Sign in with Google
             </button>
-            <button className={styles.socialButton2}>
+            <button
+              className={styles.socialButton2}
+              onClick={handleFacebookLogin}
+            >
               <FacebookIcon /> Sign in with Facebook
             </button>
 
             <p className={styles.p}>
-              Have an account already? {" "}
+              Have an account already?{" "}
               <span
                 className={styles.link}
                 onClick={() => setShowLogin(true)}

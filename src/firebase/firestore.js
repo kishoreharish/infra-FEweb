@@ -1,31 +1,35 @@
-import { firestore } from "./firebase-config";  // Import firestore from firebase-config.js
-import { collection, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, onSnapshot, getDocs } from 'firebase/firestore';
+import { firestore } from './firebase-config';
 
-// Example: Add a message to Firestore
+// Add a new message
 export const addMessage = async (message) => {
   try {
-    await firestore.collection("messages").add({
+    const messagesCollection = collection(firestore, "messages");
+    await addDoc(messagesCollection, {
       content: message,
       timestamp: new Date(),
     });
     console.log("Message added successfully");
   } catch (error) {
-    console.error("Error adding message: ", error);
+    console.error("Error adding message:", error);
   }
 };
 
-// Example: Listen for real-time changes
+// Real-time listener for messages
 export const listenForMessages = (callback) => {
-  firestore.collection("messages").orderBy("timestamp").onSnapshot(snapshot => {
-    const messages = snapshot.docs.map(doc => doc.data());
+  const messagesCollection = collection(firestore, "messages");
+  const messagesQuery = query(messagesCollection, orderBy("timestamp", "desc"));
+
+  onSnapshot(messagesQuery, (snapshot) => {
+    const messages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     callback(messages);
   });
 };
 
-// Correct usage with Firestore v9+ modular SDK
-const getMessages = async () => {
-    const messagesCollection = collection(firestore, "messages"); // Specify the collection
-    const messagesSnapshot = await getDocs(messagesCollection);  // Fetch documents from the collection
-    const messagesList = messagesSnapshot.docs.map(doc => doc.data()); // Map docs to their data
-    console.log(messagesList);
-  };
+// Fetch all messages
+export const getMessages = async () => {
+  const messagesCollection = collection(firestore, "messages");
+  const messagesSnapshot = await getDocs(messagesCollection);
+  const messages = messagesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return messages;
+};

@@ -1,6 +1,6 @@
 .authContainer {
   display: flex;
-  height: 60vh;
+  height: 70vh;
   width: 1000px;
   flex-direction: row;
 
@@ -89,6 +89,7 @@
       font-size: small;
       color: #888;
       margin-top: 60px;
+      text-decoration: none;
     }
 
     .link {
@@ -104,19 +105,20 @@
       font-size: 32px;
       margin-bottom: 0px;
       color: #4f4f4f;
-    
+      text-decoration: none;
     }
 
     .signInText {
       font-size: 32px;
       margin-bottom: 0px;
       color: #4f4f4f;
+      text-decoration: none;
     }
 
     .enterEmailText {
       font-size: 12px;
       color: #4f4f4f;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
       text-align: center;
     }
 
@@ -303,6 +305,65 @@
           background-color: #0056b3;
         }
       }
+    }
+  }
+}
+
+.profileTypeSelection {
+  display: flex;
+  justify-content: space-between; /* Align items to the left and right ends */
+  margin: 20px 0;
+  
+  
+  width: 320px;
+
+  label {
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    input[type="radio"] {
+      margin-right: 10px;
+      accent-color: #007bff; /* Customize the radio button color */
+    }
+
+    &:hover {
+      color: #007bff; /* Hover effect for the label text */
+    }
+  }
+}
+
+.alertMessage {
+  color: red;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+
+.profileText {
+  font-size: 10px; /* Adjust text size */
+  line-height: 1.6; /* Line height for readability */
+  color: #6c757d; /* A muted text color */
+  margin-top: 0px; /* Add some space above */
+  text-align: center; /* Center-align the text */
+  max-width: 500px; /* Limit the width of the text */
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 10px;
+
+  /* Responsive: Adjust text size on smaller screens */
+  @media (max-width: 768px) {
+    font-size: 11px;
+  }
+
+  a {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Remove underline */
+    &:hover {
+      text-decoration: underline; /* Underline on hover */
     }
   }
 }

@@ -80,8 +80,9 @@
   background-color: #1976d2;
   color: white;
   font-weight: 500;
+  font-size: 12px;
   text-transform: none;
-  width: 120px; /* Same width for consistency */
+  width: 220px; /* Same width for consistency */
   height: 40px; /* Same height for consistency */
 
   &:hover {
@@ -130,7 +131,7 @@
 .drawerButtonContained {
   background-color: #1976d2;
   color: white;
-  width: 120px; /* Same width for consistency */
+  width: 220px; /* Same width for consistency */
   height: 40px; /* Same height for consistency */
   text-transform: none;
 
@@ -167,4 +168,9 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.userName {
+  color: #636363;
+  
 }

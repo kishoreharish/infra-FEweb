@@ -1,41 +1,20 @@
-// pushNotifications.js
-import { messaging, firestore } from './firebase-config';
-import { getToken, onMessage } from 'firebase/messaging';
+// src/firebase/pushNotifications.js
+import { getMessaging, onMessage } from 'firebase/messaging';
+import { messaging } from './firebase-config'; // Ensure this is correctly imported
 
-const setupPushNotifications = async () => {
-  try {
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      console.error('Notification permission denied');
-      return;
-    }
-
-    const token = await getToken(messaging, {
-      vapidKey: 'your-vapid-key-here', // Replace with your VAPID key
-    });
-
-    if (token) {
-      console.log('Push notification token:', token);
-
-      // Save the token to Firestore
-      await firestore.collection('users').doc('your-user-id').set({
-        pushToken: token,
-      }, { merge: true });
-    } else {
-      console.log('No push token available');
-    }
-  } catch (error) {
-    console.error('Error during push notification setup', error);
-  }
+export const setupPushNotifications = () => {
+  console.log('Push notifications setup');
+  // Additional setup code here if necessary
 };
 
-const onMessageListener = () => {
-  return new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
+export const onMessageListener = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
       resolve(payload);
     });
+
+    // In case of failure
+    reject('Failed to listen for messages');
   });
 };
-
-export { setupPushNotifications, onMessageListener };
