@@ -1,6 +1,10 @@
 import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 import { auth, firestore } from '../firebase/firebase-config';
 import { collection, doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
+import axios from 'axios';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 // Google Sign-In
 export const googleLogin = async () => {
@@ -63,3 +67,97 @@ export const listenForMessages = (callback) => {
     callback(messages);
   });
 };
+
+
+// After Firebase successful sign-up (Google/Facebook/Email)
+const handleSignUp = async () => {
+  try {
+    // Assuming the user is already logged in via Firebase (Google/Facebook/Email)
+    const user = auth.currentUser;  // Firebase user object
+
+    // Send the user data to the Django API to create the user in the Django database
+    const response = await fetch('http://127.0.0.1:8000/api/users/signup/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: user.email,
+        firebaseUid: user.uid,
+        displayName: user.displayName,
+      }),
+    });
+
+    if (response.ok) {
+      console.log('User created in Django');
+    }
+  } catch (error) {
+    console.error('Error signing up:', error);
+  }
+};
+
+const signupWithFirebase = async (email, password) => {
+  try {
+    // Sign up with Firebase (email and password)
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    const user = result.user;
+
+    // Send user data to Django backend
+    const response = await axios.post('/api/users/signup/', {
+      email: user.email,
+      firebaseUid: user.uid,
+      displayName: user.displayName,
+      phoneNumber: user.phoneNumber,
+      role: 'candidate',  // Default role, adjust as needed
+    });
+
+    console.log('User signed up:', response.data);
+  } catch (error) {
+    console.error('Error signing up with Firebase:', error.message);
+  }
+};
+
+const handleSignup = async (email, password) => {
+  try {
+    // Sign up with Firebase email/password
+    await firebase.auth().createUserWithEmailAndPassword(email, password);
+    
+    // Get the Firebase ID token after sign-up
+    const user = firebase.auth().currentUser;
+    const idToken = await user.getIdToken();
+
+    // Send the token to your Django backend to create the user profile
+    await axios.post('/api/users/create-profile/', { token: idToken });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${idToken}`
+  },
+  body: JSON.stringify({ profile_type: profileType }),
+});
+
+if (!response.ok) {
+  // Handle error
+  console.error('Error:', response.statusText);
+  return;
+}
+
+const contentType = response.headers.get("content-type");
+if (contentType && contentType.includes("application/json")) {
+  const data = await response.json();
+  if (data.success) {
+    localStorage.setItem("token", data.token); // Store backend token
+    closeModal();
+  } else {
+    setError(data.message); // Handle backend validation errors
+  }
+} else {
+  const htmlResponse = await response.text(); // If it's not JSON, log the response
+  console.error('Non-JSON response:', htmlResponse);
+}

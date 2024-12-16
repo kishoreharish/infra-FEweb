@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // Correct import for CheckCircleIcon
 import GoogleIcon from "@mui/icons-material/Google"; // Correct import for Google icon
@@ -9,6 +9,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  onAuthStateChanged,
+  getIdToken,
 } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { auth, googleProvider, facebookProvider } from "../../firebase/firebase-config"; // Import providers from Firebase config
@@ -20,36 +22,105 @@ const AuthComponents = ({ closeModal }) => {
   const [profileType, setProfileType] = useState(null); // State for profile type
   const [error, setError] = useState(null);
   const [alertMessage, setAlertMessage] = useState(""); // New state for custom alert message
+  const [user, setUser] = useState(null); // Store user data
+
+  useEffect(() => {
+    // Listen for authentication state changes and fetch the current user
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        // Retrieve and store the token in localStorage
+        getIdToken(currentUser).then((idToken) => {
+          localStorage.setItem("token", idToken); // Store token in localStorage
+        });
+      } else {
+        setUser(null);
+        localStorage.removeItem("token"); // Clear token when logged out
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   // Handle regular email/password login
   const handleLogin = async () => {
     if (!profileType) {
-      setAlertMessage("Please select a profile type (Candidate or Employer)."); // Set custom error message
+      setAlertMessage("Please select a profile type (Candidate or Employer).");
       return;
     }
+  
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in");
-      closeModal(); // Close the modal on successful login
-    } catch (err) {
-      setError(err.message); // Show error message if login fails
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      // Fetch the Firebase token
+      const idToken = await getIdToken(user);
+  
+      // Send the token to your backend for validation
+      const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}` // Send token in the Authorization header
+        },
+        body: JSON.stringify({
+          profile_type: profileType, // You can send the profile type or any other required data
+        })
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        // Handle successful login
+        localStorage.setItem("token", data.token); // Store the backend token
+        closeModal();
+      } else {
+        setError(data.message); // Handle backend validation errors
+      }
+    } catch (error) {
+      setError(error.message);
     }
   };
+  
+  
 
   // Handle regular sign up (email/password)
   const handleSignUp = async () => {
     if (!profileType) {
-      setAlertMessage("Please select a profile type (Candidate or Employer)."); // Set custom error message
+      setAlertMessage("Please select a profile type (Candidate or Employer).");
       return;
     }
+  
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log("User signed up", { email, profileType });
-      closeModal(); // Close the modal on successful sign up
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      // Create the user in your Django backend
+      const response = await fetch('http://127.0.0.1:8000/api/auth/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          profile_type: profileType.toLowerCase(), // ensure 'candidate' or 'employer'
+          firebase_uid: user.uid,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        console.log("User signed up successfully");
+        closeModal(); // Close modal on successful sign-up
+      } else {
+        setError(data.message); // Handle backend validation errors
+      }
     } catch (err) {
       setError(err.message); // Show error message if sign up fails
     }
   };
+  
 
   // Handle Google login via Firebase
   const handleGoogleLogin = async () => {
@@ -61,6 +132,9 @@ const AuthComponents = ({ closeModal }) => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       console.log("Google User: ", user);
+      getIdToken(user).then((idToken) => {
+        localStorage.setItem("token", idToken); // Store token in localStorage
+      });
       closeModal(); // Close the modal on successful login
     } catch (error) {
       setError(error.message); // Show error message if login fails
@@ -77,13 +151,16 @@ const AuthComponents = ({ closeModal }) => {
       const result = await signInWithPopup(auth, facebookProvider);
       const user = result.user;
       console.log("Facebook User: ", user);
+      getIdToken(user).then((idToken) => {
+        localStorage.setItem("token", idToken); // Store token in localStorage
+      });
       closeModal(); // Close the modal on successful login
     } catch (error) {
       setError(error.message); // Show error message if login fails
     }
   };
 
-  {/* Profile Type Specific Text */}
+  // Profile Type Specific Text
   {profileType === "Candidate" && (
     <p className={styles.profileText}>
       Ready to take the next step? Create an account or sign in. By creating an account or signing in, you understand and agree to Indeed's Terms. You also consent to our Cookie and Privacy policies. You will receive marketing messages from Indeed and may opt out at any time by following the unsubscribe link in our messages, or as detailed in our terms.
@@ -162,8 +239,6 @@ const AuthComponents = ({ closeModal }) => {
             <button className={styles.loginBtn} onClick={handleLogin}>
               Login
             </button>
-
-            
 
             {/* Horizontal Line */}
             <hr className={styles.divider} />
@@ -257,8 +332,6 @@ const AuthComponents = ({ closeModal }) => {
               Sign Up
             </button>
 
-            
-
             {/* Horizontal Line */}
             <hr className={styles.divider} />
 
@@ -337,5 +410,7 @@ const AuthComponents = ({ closeModal }) => {
     </div>
   );
 };
+
+
 
 export default AuthComponents;
