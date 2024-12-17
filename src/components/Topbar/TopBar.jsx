@@ -19,11 +19,10 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebase-config";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import styles from "./Topbar.module.scss";
 import logo from "../../assets/images/infrajobs.jpg";
 import AuthComponents from "../AuthComponents/authcomponents";
@@ -33,17 +32,14 @@ const TopBar = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState("login");
   const [user, setUser] = useState(null);
-
-  // For the dropdown menu next to the avatar
   const [anchorEl, setAnchorEl] = useState(null);
 
   const menuItems = ["Home", "Jobs", "Companies", "Services"];
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
+  // Monitor authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -73,8 +69,10 @@ const TopBar = () => {
     try {
       await signOut(auth);
       console.log("User logged out");
-      setDrawerOpen(false);
+      setUser(null);
       handleMenuClose();
+      setDrawerOpen(false);
+      navigate("/"); // Redirect to home page
     } catch (error) {
       console.error("Logout Error:", error.message);
     }
@@ -90,7 +88,6 @@ const TopBar = () => {
     setAnchorEl(null);
   };
 
-  // Navigate to candidate profile page
   const goToCandidateProfile = () => {
     handleMenuClose();
     navigate("/candidate-profile");
@@ -106,7 +103,7 @@ const TopBar = () => {
               <img src={logo} alt="InfraJobs Logo" className={styles.logo} />
             </Box>
 
-            {/* Inline Menu Items (only on wide screens) */}
+            {/* Inline Menu Items (Wide screens) */}
             {!isMobile && (
               <Box className={styles.menu}>
                 {menuItems.map((item, index) => (
@@ -132,20 +129,17 @@ const TopBar = () => {
                     </Button>
                   </>
                 ) : (
-                  // If user logged in, show notification icon, reduced-size avatar, and menu icon
                   <Box display="flex" alignItems="center">
                     <IconButton>
                       <NotificationsIcon />
                     </IconButton>
-                    <Box sx={{ mx: 1 }}>
-                      <Avatar
-                        alt={user.displayName || "User"}
-                        src={user.photoURL || ""}
-                        sx={{ width: 20, height: 20, cursor: 'pointer' }}
-                        onClick={goToCandidateProfile} // Clicking avatar navigates to profile
-                      />
-                    </Box>
-                    <IconButton sx={{ ml: 0.5 }} onClick={handleMenuIconClick}>
+                    <Avatar
+                      alt={user.displayName || "User"}
+                      src={user.photoURL || ""}
+                      sx={{ width: 40, height: 40, cursor: "pointer", mx: 1 }}
+                      onClick={goToCandidateProfile}
+                    />
+                    <IconButton onClick={handleMenuIconClick}>
                       <MenuIcon />
                     </IconButton>
                   </Box>
@@ -153,28 +147,22 @@ const TopBar = () => {
               </Box>
             )}
 
-            {isMobile && <Box flexGrow={1} />}
-
-            {/* Burger Icon always at the right end */}
-            <IconButton
-              edge="end"
-              onClick={handleDrawerToggle}
-              className={styles.hamburger}
-            >
-              <MenuIcon />
-            </IconButton>
+            {/* Burger Icon for Mobile */}
+            {isMobile && (
+              <IconButton edge="end" onClick={handleDrawerToggle}>
+                <MenuIcon />
+              </IconButton>
+            )}
           </Toolbar>
         </Box>
       </AppBar>
 
-      {/* Dropdown menu (Wide screen only, when user is logged in) */}
+      {/* Dropdown Menu (Wide Screen) */}
       {!isMobile && user && (
-        <Menu 
-          className={styles.dropmenu}
+        <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
-          disableScrollLock={true} 
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "right",
@@ -190,72 +178,72 @@ const TopBar = () => {
         </Menu>
       )}
 
-      {/* Drawer for mobile */}
-      <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
-        <Box className={styles.drawer}>
-          <IconButton onClick={handleDrawerToggle} className={styles.closeIcon}>
-            <CloseIcon />
-          </IconButton>
-          <List>
-            {/* Navigation items */}
-            {menuItems.map((item, index) => (
-              <ListItem button key={index} onClick={handleDrawerToggle}>
-                <ListItemText primary={item} className={styles.drawerItem} />
-              </ListItem>
-            ))}
+      {/* Drawer for Mobile Only */}
+      {isMobile && (
+        <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
+          <Box className={styles.drawer}>
+            <IconButton onClick={handleDrawerToggle} className={styles.closeIcon}>
+              <CloseIcon />
+            </IconButton>
+            <List>
+              {menuItems.map((item, index) => (
+                <ListItem button key={index} onClick={handleDrawerToggle}>
+                  <ListItemText primary={item} />
+                </ListItem>
+              ))}
 
-            <Divider />
+              <Divider />
 
-            {!user ? (
-              <>
-                <ListItem>
-                  <button
-                    className={styles.drawerButtonOutline}
-                    onClick={() => {
-                      handleLoginClick();
-                      handleDrawerToggle();
-                    }}
-                  >
-                    Login / Sign Up
-                  </button>
-                </ListItem>
-                <ListItem>
-                  <Button
-                    variant="contained"
-                    className={styles.drawerButtonContained}
-                    onClick={() => {
-                      handleJobPostClick();
-                      handleDrawerToggle();
-                    }}
-                  >
-                    Employers / Job Post
-                  </Button>
-                </ListItem>
-              </>
-            ) : (
-              <>
-                {/* On mobile, user actions under divider */}
-                <ListItem button onClick={() => { handleDrawerToggle(); goToCandidateProfile(); }}>
-                  <ListItemText primary="Profile" className={styles.drawerItem} />
-                </ListItem>
-                <ListItem button onClick={handleDrawerToggle}>
-                  <ListItemText primary="Settings" className={styles.drawerItem} />
-                </ListItem>
-                <ListItem>
-                  <button
-                    className={styles.drawerButtonOutline}
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </ListItem>
-              </>
-            )}
-          </List>
-        </Box>
-      </Drawer>
+              {!user ? (
+                <>
+                  <ListItem>
+                    <button
+                      className={styles.drawerButtonOutline}
+                      onClick={() => {
+                        handleLoginClick();
+                        handleDrawerToggle();
+                      }}
+                    >
+                      Login / Sign Up
+                    </button>
+                  </ListItem>
+                  <ListItem>
+                    <Button
+                      variant="contained"
+                      className={styles.drawerButtonContained}
+                      onClick={() => {
+                        handleJobPostClick();
+                        handleDrawerToggle();
+                      }}
+                    >
+                      Employers / Job Post
+                    </Button>
+                  </ListItem>
+                </>
+              ) : (
+                <>
+                  <ListItem button onClick={goToCandidateProfile}>
+                    <ListItemText primary="Profile" />
+                  </ListItem>
+                  <ListItem button>
+                    <ListItemText primary="Settings" />
+                  </ListItem>
+                  <ListItem>
+                    <button
+                      className={styles.drawerButtonOutline}
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </ListItem>
+                </>
+              )}
+            </List>
+          </Box>
+        </Drawer>
+      )}
 
-      {/* Modal for AuthComponents */}
+      {/* Auth Modal */}
       {showModal && (
         <div
           className={styles.modalOverlay}

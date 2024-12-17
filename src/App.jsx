@@ -10,6 +10,7 @@ import JobSeekerProfile from "./pages/JobSeekerProfile/JobSeekerProfile";
 import CandidateProfile from "./components/CandidateProfile/CandidateProfile";
 import EmployerProfile from "./pages/EmployerProfile/EmployerProfile";
 import Topbar from "./components/Topbar/TopBar";
+import PrivateRoute from "./components/PrivateRoute";
 import { setupPushNotifications, onMessageListener } from "./firebase/pushNotifications";
 import { firestore } from "./firebase/firebase-config";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -68,6 +69,14 @@ const App = () => {
         <Route path="/profile/job-seeker" element={<JobSeekerProfile />} />
         <Route path="/profile/employer" element={<EmployerProfile />} />
         <Route path="/candidate-profile" element={<CandidateProfile />} />
+        <Route
+          path="/candidate-profile"
+          element={
+            <PrivateRoute>
+              <CandidateProfile />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
