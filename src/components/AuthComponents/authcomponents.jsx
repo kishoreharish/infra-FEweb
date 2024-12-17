@@ -65,14 +65,16 @@ const AuthComponents = ({ closeModal }) => {
           'Authorization': `Bearer ${idToken}` // Send token in the Authorization header
         },
         body: JSON.stringify({
-          profile_type: profileType, // You can send the profile type or any other required data
+          profile_type: profileType.toLowerCase(), // ensure 'candidate' or 'employer'
         })
       });
   
       const data = await response.json();
+      console.log("Login response:", data);
       if (data.success) {
         // Handle successful login
-        localStorage.setItem("token", data.token); // Store the backend token
+        // If your backend doesn't provide 'token', remove this line or adjust accordingly.
+        localStorage.setItem("token", data.token); // Store the backend token if provided
         closeModal();
       } else {
         setError(data.message); // Handle backend validation errors
@@ -109,6 +111,7 @@ const AuthComponents = ({ closeModal }) => {
       });
   
       const data = await response.json();
+      console.log("Signup response:", data);
   
       if (data.success) {
         console.log("User signed up successfully");
@@ -120,7 +123,6 @@ const AuthComponents = ({ closeModal }) => {
       setError(err.message); // Show error message if sign up fails
     }
   };
-  
 
   // Handle Google login via Firebase
   const handleGoogleLogin = async () => {
@@ -410,7 +412,5 @@ const AuthComponents = ({ closeModal }) => {
     </div>
   );
 };
-
-
 
 export default AuthComponents;

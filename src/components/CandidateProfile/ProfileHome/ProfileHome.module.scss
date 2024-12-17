@@ -1,0 +1,67 @@
+.profileHomeContainer {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    
+  }
+  
+  .ant-tabs {
+    text-align: left;
+  }
+  
+  .ant-tabs-tab {
+    font-size: 1.1rem; /* Larger tab titles */
+    font-weight: bold;
+  }
+  
+  .tabContent {
+    height: 800px; /* Set a fixed height for scrollable content */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 10px; /* Add slight padding for scrollbar spacing */
+  }
+  
+  .jobGrid {
+    display: flex;
+    flex-direction: column; /* Full-width layout for large screens */
+    gap: 16px;
+    margin-top: 10px; /* Reduced top margin for better alignment */
+  }
+  
+  .collapseContent {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .jobCard {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 0px 0px 0px 0px; /* Adjusted inner padding */
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 10px;
+  
+    // &:hover {
+    //   transform: translateY(-5px);
+    // }
+  }
+  
+  .jobTitle {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0 0 4px 0; /* Removed top margin, added small bottom margin */
+    padding: 0; /* Ensure no default padding is applied */
+  }
+  
+  .jobCompany {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 4px; /* Consistent spacing */
+  }
+  
+  .jobLocation {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0; /* Align neatly with no additional spacing */
+  }
+  

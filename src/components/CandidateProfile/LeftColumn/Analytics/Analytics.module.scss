@@ -1,0 +1,35 @@
+.analyticsContainer {
+    padding: 6px;
+    margin-top: 10px;
+    background-color: #f5f5f5; // Light gray background
+   border-radius: 8px;
+  }
+  
+  .card {
+    border: 1px solid #e0e0e0; // Light border for the card
+    border-radius: 8px; // Rounded corners
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow
+    transition: transform 0.2s;
+    width: 100%;
+  // padding:10px;
+    &:hover {
+      transform: translateY(-4px); // Slight lift on hover
+    }
+  }
+  
+  .title {
+    font-weight: 500;
+    color: #555;
+    font-size: 12px;
+  }
+  
+  .value {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .analytics{
+    width: 100%;
+    border-radius: 8px;
+  }

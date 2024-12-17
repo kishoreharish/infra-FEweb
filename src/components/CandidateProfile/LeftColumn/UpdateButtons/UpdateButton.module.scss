@@ -1,0 +1,28 @@
+.buttonContainer {
+    display: flex;
+    flex-direction: column; /* Stack vertically by default */
+    gap: 10px; /* Space between buttons */
+    padding-top: 10px;
+  
+    @media (min-width: 768px) {
+      flex-direction: row; /* Side by side on wider screens */
+      align-items: center;
+    }
+  }
+  
+  .updateBtn {
+    border: 1px solid #007bff; /* Outlined style */
+    background: #fff;
+    color: #007bff;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    width: 100%;
+  
+    &:hover {
+      border-color: #999;
+      color: #000;
+    }
+  }
+  

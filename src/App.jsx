@@ -7,6 +7,7 @@ import Employers from "./pages/Employers/Employers";
 import Companies from "./pages/Companies/Companies";
 import Services from "./pages/Services/services";
 import JobSeekerProfile from "./pages/JobSeekerProfile/JobSeekerProfile";
+import CandidateProfile from "./components/CandidateProfile/CandidateProfile";
 import EmployerProfile from "./pages/EmployerProfile/EmployerProfile";
 import Topbar from "./components/Topbar/TopBar";
 import { setupPushNotifications, onMessageListener } from "./firebase/pushNotifications";
@@ -66,6 +67,7 @@ const App = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/profile/job-seeker" element={<JobSeekerProfile />} />
         <Route path="/profile/employer" element={<EmployerProfile />} />
+        <Route path="/candidate-profile" element={<CandidateProfile />} />
       </Routes>
     </Router>
   );

@@ -1,0 +1,50 @@
+.myProfileContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+  
+    /* Top Section: Profile and Analytics */
+    .topSection {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+  
+      @media (min-width: 768px) {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+  
+    /* Cards Container for Bottom Sections */
+    .cardsContainer {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+  
+      @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr; /* Two cards per row for medium screens */
+      }
+  
+      @media (min-width: 1024px) {
+        grid-template-columns: 1fr 1fr 1fr; /* Three cards per row for large screens */
+      }
+  
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        box-sizing: border-box;
+        transition: box-shadow 0.3s ease;
+  
+        &:hover {
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+  

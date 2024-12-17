@@ -1,0 +1,72 @@
+.workExperienceCard {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease;
+    margin-top: 10px;
+  
+    &:hover {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  .title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+  }
+  
+  .experienceList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .experienceItem {
+    border-left: 4px solid #0073e6;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  
+    &:hover {
+      background: #f3f3f3;
+    }
+  }
+  
+  .jobTitle {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #333;
+  }
+  
+  .company {
+    font-size: 1rem;
+    color: #666;
+    margin: 0 0 5px 0;
+  }
+  
+  .duration {
+    font-size: 0.9rem;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  
+  .responsibilities {
+    list-style: disc;
+    padding-left: 20px;
+    margin: 0;
+  
+    li {
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 5px;
+    }
+  }
+  

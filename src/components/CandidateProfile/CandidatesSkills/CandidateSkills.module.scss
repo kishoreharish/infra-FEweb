@@ -1,0 +1,39 @@
+.skillsContainer {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0; /* Remove default margins */
+      padding-bottom: 10px; /* Add a bit of spacing below the title */
+      color: #333;
+    }
+  
+  
+  
+    .skillsList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  
+    .skillChip {
+      font-size: 0.9rem;
+      color: #636363;
+      border: 1px solid #636363;
+      border-radius: 20px;
+      padding: 5px 10px;
+      transition: all 0.3s ease;
+  
+      &:hover {
+        background: #0073e6;
+        color: #fff;
+      }
+    }
+  }
+  

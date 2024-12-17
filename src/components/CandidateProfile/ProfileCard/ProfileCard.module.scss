@@ -1,0 +1,112 @@
+.profileCard {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 10px;
+    width: 100%;
+  }
+  
+  .coverImageWrapper {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+  
+    .coverImage {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+  }
+  
+  .avatarWrapper {
+    position: absolute;
+    top: 120px; /* Adjust to overlap the cover image */
+    left: 20px;
+  }
+  
+  .cardContent {
+    margin-top: 60px; /* Space after avatar overlap */
+    padding: 0 20px;
+  }
+  
+  .name {
+    font-size: 1.5rem;
+    margin: 0;
+    margin-bottom: 5px;
+  }
+  
+  .title {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  /* Certificates Section */
+  .certificates {
+    display: flex;
+    gap: 15px; /* Adds space between items */
+    flex-wrap: wrap; /* Wraps content to new line if needed */
+    margin-bottom: 15px;
+  
+    .certItem {
+      background: #f5f5f5;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 0.9rem;
+      color: #333;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .bio {
+    margin-bottom: 15px;
+  }
+  
+  .place {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  /* Footer Section */
+  .footerSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 10px;
+  
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  
+  /* Followers and Connect */
+  .followConnect {
+    display: flex;
+    gap: 15px;
+  }
+  
+  /* Update Links */
+  .updateLinks {
+    display: flex;
+    gap: 15px;
+  
+    .updateLink {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      color: #535353;
+      cursor: pointer;
+  
+      &:hover {
+        color: #125faa;
+      }
+    }
+  }
+  

@@ -1,0 +1,61 @@
+.certificatesCard {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 20px;
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease;
+    margin-top: 10px;
+  
+    &:hover {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  .title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 15px 0;
+  }
+  
+  .certificatesGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); /* 1 column by default */
+    gap: 15px;
+  
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns on larger screens */
+    }
+  }
+  
+  .certificateItem {
+    background: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
+  
+    &:hover {
+      background: #f3f3f3;
+    }
+  }
+  
+  .certificateTitle {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0 0 5px 0;
+  }
+  
+  .programDetails {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .year {
+    font-weight: 600;
+    color: #888;
+  }
+  
