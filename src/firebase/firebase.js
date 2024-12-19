@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getMessaging } from 'firebase/messaging';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Firebase config
 const firebaseConfig = {
@@ -25,4 +25,7 @@ const messaging = getMessaging(app);
 // Initialize Firestore (if needed)
 const db = getFirestore(app);
 
-export { messaging, db };
+//Social Auth
+const googleProvider = new GoogleAuthProvider();
+
+export { messaging, db, auth, googleProvider };

@@ -74,6 +74,10 @@ const handleSignUp = async () => {
   try {
     // Assuming the user is already logged in via Firebase (Google/Facebook/Email)
     const user = auth.currentUser;  // Firebase user object
+    if (user) {
+      const idToken = await getIdToken(user);
+      console.log("Firebase ID Token:", idToken);
+  }
 
     // Send the user data to the Django API to create the user in the Django database
     const response = await fetch('http://127.0.0.1:8000/api/users/signup/', {
@@ -124,7 +128,7 @@ const handleSignup = async (email, password) => {
     
     // Get the Firebase ID token after sign-up
     const user = firebase.auth().currentUser;
-    const idToken = await user.getIdToken();
+    const idToken = await firebase.auth().currentUser.getIdToken();
 
     // Send the token to your Django backend to create the user profile
     await axios.post('/api/users/create-profile/', { token: idToken });
