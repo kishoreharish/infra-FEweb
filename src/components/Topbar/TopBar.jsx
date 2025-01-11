@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext"; // AuthContext
 import {
   AppBar,
   Toolbar,
@@ -21,81 +20,73 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 import styles from "./Topbar.module.scss";
 import logo from "../../assets/images/infrajobs.jpg";
 import AuthComponents from "../AuthComponents/authcomponents";
 
 const TopBar = () => {
-  const { user, logout } = useContext(AuthContext); // Get user and logout from AuthContext
+  const { user, logout } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState("login");
-  const [anchorEl, setAnchorEl] = useState(null); // For dropdown menu
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const menuItems = [
-    { label: "Home", path: "/" }, // Add a path for each menu item
+    { label: "Home", path: "/" },
     { label: "Jobs", path: "/jobs" },
     { label: "Companies", path: "/companies" },
     { label: "Services", path: "/services" },
   ];
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
-  // Toggle mobile drawer
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
     toggleBodyScroll(!drawerOpen);
   };
 
-  // Show login modal
   const handleLoginClick = () => {
     setModalContent("login");
     setShowModal(true);
   };
 
-  // Show job post modal
   const handleJobPostClick = () => {
     setModalContent("jobPost");
     setShowModal(true);
   };
 
-  // Close modal
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
-  // Open menu for authenticated users
   const handleMenuIconClick = (event) => {
     if (user) {
-      setAnchorEl(event.currentTarget); // Open dropdown menu
+      setAnchorEl(event.currentTarget);
     }
   };
 
-  // Close menu
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  // Redirect to candidate profile
   const goToCandidateProfile = () => {
     handleMenuClose();
     navigate("/candidate-profile");
   };
 
-  // Handle logout
   const handleLogout = async () => {
     try {
-      await logout(); // Use AuthContext logout
-      handleMenuClose(); // Close dropdown menu
-      navigate("/"); // Redirect after logout
+      await logout();
+      handleMenuClose();
+      navigate("/");
     } catch (error) {
       console.error("Logout Error:", error.message);
     }
   };
 
-  // Disable/enable body scroll when drawer is open/closed
   const toggleBodyScroll = (disable) => {
     if (disable) {
       document.body.style.overflow = "hidden";
@@ -109,32 +100,29 @@ const TopBar = () => {
       <AppBar position="static" className={styles.appBar}>
         <Box className={styles.outerContainer}>
           <Toolbar className={styles.toolbar}>
-            {/* Logo */}
             <Box className={styles.logoContainer}>
               <img
                 src={logo}
                 alt="InfraJobs Logo"
                 className={styles.logo}
-                onClick={() => navigate("/")} // Navigate to Home when the logo is clicked
+                onClick={() => navigate("/")}
                 style={{ cursor: "pointer" }}
               />
             </Box>
 
-            {/* Desktop Menu */}
             {!isMobile && (
               <Box className={styles.menu}>
                 {menuItems.map((item, index) => (
                   <Typography
                     key={index}
                     className={styles.menuItem}
-                    onClick={() => navigate(item.path)} // Navigate to the corresponding path
+                    onClick={() => navigate(item.path)}
                     style={{ cursor: "pointer" }}
                   >
                     {item.label}
                   </Typography>
                 ))}
 
-                {/* Show login buttons or user menu */}
                 {!user ? (
                   <>
                     <button
@@ -160,17 +148,22 @@ const TopBar = () => {
                       alt={user.username || "User"}
                       src={user.photoURL || ""}
                       sx={{ width: 30, height: 30, cursor: "pointer", mx: 1 }}
-                      onClick={goToCandidateProfile}
+                      onClick={
+                        user.role === "candidate"
+                          ? goToCandidateProfile
+                          : undefined
+                      }
                     />
-                    <IconButton onClick={handleMenuIconClick}>
-                      <MenuIcon />
-                    </IconButton>
+                    {user.role === "candidate" && (
+                      <IconButton onClick={handleMenuIconClick}>
+                        <MenuIcon />
+                      </IconButton>
+                    )}
                   </Box>
                 )}
               </Box>
             )}
 
-            {/* Mobile Menu Icon */}
             {isMobile && (
               <IconButton edge="end" onClick={handleDrawerToggle}>
                 <MenuIcon />
@@ -180,8 +173,7 @@ const TopBar = () => {
         </Box>
       </AppBar>
 
-      {/* Dropdown Menu for Authenticated Users */}
-      {user && (
+      {user && user.role === "candidate" && (
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -194,12 +186,12 @@ const TopBar = () => {
             vertical: "top",
             horizontal: "right",
           }}
-          disableScrollLock={true} // Prevent body scroll lock
+          disableScrollLock={true}
           PaperProps={{
             style: {
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Optional: custom shadow
-              margin: 0, // Ensure no extra margin
-              padding: 0, // Ensure no extra padding
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              margin: 0,
+              padding: 0,
             },
           }}
         >
@@ -209,7 +201,6 @@ const TopBar = () => {
         </Menu>
       )}
 
-      {/* Mobile Drawer */}
       {isMobile && (
         <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
           <Box className={styles.drawer}>
@@ -225,8 +216,8 @@ const TopBar = () => {
                   button
                   key={index}
                   onClick={() => {
-                    navigate(item.path); // Navigate to the corresponding path
-                    handleDrawerToggle(); // Close drawer
+                    navigate(item.path);
+                    handleDrawerToggle();
                   }}
                 >
                   <ListItemText primary={item.label} />
@@ -282,7 +273,6 @@ const TopBar = () => {
         </Drawer>
       )}
 
-      {/* Auth Modal */}
       {showModal && (
         <div
           className={styles.modalOverlay}

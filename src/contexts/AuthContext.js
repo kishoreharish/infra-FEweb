@@ -35,22 +35,28 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed.");
+      }
+
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
-        setUser(data.user); // Update the user state
-        return true; // Successful login
-      } else {
-        throw new Error(data.message || "Login failed");
-      }
+      // Save the tokens and user details
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+      setUser(data.user); // Update the AuthContext with the logged-in user
+
+      return data.user; // Return the user object
     } catch (error) {
-      console.error("Error during login:", error.message);
-      return false; // Failed login
+      console.error("Login error:", error);
+      throw error;
     }
   };
 

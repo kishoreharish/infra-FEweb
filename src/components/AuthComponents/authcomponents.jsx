@@ -4,7 +4,8 @@ import styles from "./authcomponents.module.scss";
 import logo from "../../assets/images/infrajobs.jpg";
 import { signInWithPopup, onAuthStateChanged, getIdToken } from "firebase/auth";
 import { auth, googleProvider, facebookProvider } from "../../firebase/firebase-config";
-import { AuthContext } from "../../contexts/AuthContext"; // Import AuthContext
+import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // Social Login Component
 const SocialLogin = ({ closeModal, profileType, setError }) => {
@@ -32,7 +33,11 @@ const SocialLogin = ({ closeModal, profileType, setError }) => {
       const data = await response.json();
       if (response.ok) {
         console.log(`${providerName} Login Successful:`, data);
-        window.location.href = "/home";
+        if (data.user.role === "employer") {
+          window.location.href = "/employer-profile";
+        } else {
+          window.location.href = "/home";
+        }
       } else {
         setError(data.error || `${providerName} login failed.`);
       }
@@ -61,7 +66,8 @@ const SocialLogin = ({ closeModal, profileType, setError }) => {
 };
 
 const AuthComponents = ({ closeModal }) => {
-  const { login, setUser } = useContext(AuthContext); // Use AuthContext
+  const { login, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,52 +90,78 @@ const AuthComponents = ({ closeModal }) => {
   // Handle regular email/password login
   const handleLogin = async () => {
     try {
-      const success = await login(email, password); // Call login from AuthContext
-      if (success) {
-        setError(null); // Clear any errors
-        closeModal(); // Close modal on successful login
+      const loggedInUser = await login(email, password); // AuthContext login function
+
+      if (loggedInUser && loggedInUser.role) {
+        // Redirect based on user role
+        if (loggedInUser.role === "employer") {
+          navigate("/employer-profile");
+        } else if (loggedInUser.role === "candidate") {
+          navigate("/home");
+        } else {
+          setError("Unknown user role. Please contact support.");
+        }
       } else {
-        setError("Invalid email or password.");
+        setError("Invalid login response. Please try again.");
       }
+
+      closeModal(); // Close the modal on successful login
     } catch (error) {
       console.error("Error during login:", error);
       setError("An unexpected error occurred.");
     }
   };
 
-  // Handle regular sign-up
+  // Handle regular email/password signup
   const handleSignUp = async () => {
     if (!profileType) {
       setError("Please select a profile type (Candidate or Employer).");
       return;
     }
-
+  
     try {
+      const requestBody = {
+        email,
+        username: email.split("@")[0],
+        password,
+        role: profileType.toLowerCase(),
+      };
+  
+      console.log("Request Body:", requestBody);
+  
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          username: email.split("@")[0],
-          password,
-          role: profileType.toLowerCase(),
-        }),
+        body: JSON.stringify(requestBody),
       });
-
+  
       const data = await response.json();
+      console.log("Backend Response:", data); // Log the backend response
+  
       if (response.ok) {
-        setUser(data.user); // Update the AuthContext with the new user
-        closeModal(); // Close modal on successful signup
+        setUser(data.user);
+  
+        // Navigate based on role
+        if (data.user.role === "employer") {
+          navigate("/employer-profile");
+        } else {
+          navigate("/home");
+        }
+  
+        closeModal();
       } else {
-        setError(data.message || "Signup failed.");
+        console.error("Signup Error:", data); // Log backend error
+        setError(data.message || "Signup failed."); // Display meaningful error message
       }
     } catch (error) {
       console.error("Error during signup:", error);
       setError("An unexpected error occurred.");
     }
   };
+  
+  
 
   return (
     <div className={styles.authContainer}>
