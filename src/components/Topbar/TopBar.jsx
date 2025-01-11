@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext"; // AuthContext
 import {
   AppBar,
   Toolbar,
@@ -20,77 +21,87 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebase-config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import styles from "./Topbar.module.scss";
 import logo from "../../assets/images/infrajobs.jpg";
 import AuthComponents from "../AuthComponents/authcomponents";
 
 const TopBar = () => {
+  const { user, logout } = useContext(AuthContext); // Get user and logout from AuthContext
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState("login");
-  const [user, setUser] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null); // For dropdown menu
 
-  const menuItems = ["Home", "Jobs", "Companies", "Services"];
+  const menuItems = [
+    { label: "Home", path: "/" }, // Add a path for each menu item
+    { label: "Jobs", path: "/jobs" },
+    { label: "Companies", path: "/companies" },
+    { label: "Services", path: "/services" },
+  ];
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize navigate
 
-  // Monitor authentication state
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
-
+  // Toggle mobile drawer
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
+    toggleBodyScroll(!drawerOpen);
   };
 
+  // Show login modal
   const handleLoginClick = () => {
     setModalContent("login");
     setShowModal(true);
   };
 
+  // Show job post modal
   const handleJobPostClick = () => {
     setModalContent("jobPost");
     setShowModal(true);
   };
 
+  // Close modal
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
+  // Open menu for authenticated users
+  const handleMenuIconClick = (event) => {
+    if (user) {
+      setAnchorEl(event.currentTarget); // Open dropdown menu
+    }
+  };
+
+  // Close menu
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Redirect to candidate profile
+  const goToCandidateProfile = () => {
+    handleMenuClose();
+    navigate("/candidate-profile");
+  };
+
+  // Handle logout
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      console.log("User logged out");
-      setUser(null);
-      handleMenuClose();
-      setDrawerOpen(false);
-      navigate("/"); // Redirect to home page
+      await logout(); // Use AuthContext logout
+      handleMenuClose(); // Close dropdown menu
+      navigate("/"); // Redirect after logout
     } catch (error) {
       console.error("Logout Error:", error.message);
     }
   };
 
-  const handleMenuIconClick = (event) => {
-    if (!isMobile && user) {
-      setAnchorEl(event.currentTarget);
+  // Disable/enable body scroll when drawer is open/closed
+  const toggleBodyScroll = (disable) => {
+    if (disable) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const goToCandidateProfile = () => {
-    handleMenuClose();
-    navigate("/candidate-profile");
   };
 
   return (
@@ -100,18 +111,30 @@ const TopBar = () => {
           <Toolbar className={styles.toolbar}>
             {/* Logo */}
             <Box className={styles.logoContainer}>
-              <img src={logo} alt="InfraJobs Logo" className={styles.logo} />
+              <img
+                src={logo}
+                alt="InfraJobs Logo"
+                className={styles.logo}
+                onClick={() => navigate("/")} // Navigate to Home when the logo is clicked
+                style={{ cursor: "pointer" }}
+              />
             </Box>
 
-            {/* Inline Menu Items (Wide screens) */}
+            {/* Desktop Menu */}
             {!isMobile && (
               <Box className={styles.menu}>
                 {menuItems.map((item, index) => (
-                  <Typography key={index} className={styles.menuItem}>
-                    {item}
+                  <Typography
+                    key={index}
+                    className={styles.menuItem}
+                    onClick={() => navigate(item.path)} // Navigate to the corresponding path
+                    style={{ cursor: "pointer" }}
+                  >
+                    {item.label}
                   </Typography>
                 ))}
 
+                {/* Show login buttons or user menu */}
                 {!user ? (
                   <>
                     <button
@@ -134,9 +157,9 @@ const TopBar = () => {
                       <NotificationsIcon />
                     </IconButton>
                     <Avatar
-                      alt={user.displayName || "User"}
+                      alt={user.username || "User"}
                       src={user.photoURL || ""}
-                      sx={{ width: 40, height: 40, cursor: "pointer", mx: 1 }}
+                      sx={{ width: 30, height: 30, cursor: "pointer", mx: 1 }}
                       onClick={goToCandidateProfile}
                     />
                     <IconButton onClick={handleMenuIconClick}>
@@ -147,7 +170,7 @@ const TopBar = () => {
               </Box>
             )}
 
-            {/* Burger Icon for Mobile */}
+            {/* Mobile Menu Icon */}
             {isMobile && (
               <IconButton edge="end" onClick={handleDrawerToggle}>
                 <MenuIcon />
@@ -157,8 +180,8 @@ const TopBar = () => {
         </Box>
       </AppBar>
 
-      {/* Dropdown Menu (Wide Screen) */}
-      {!isMobile && user && (
+      {/* Dropdown Menu for Authenticated Users */}
+      {user && (
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -171,6 +194,14 @@ const TopBar = () => {
             vertical: "top",
             horizontal: "right",
           }}
+          disableScrollLock={true} // Prevent body scroll lock
+          PaperProps={{
+            style: {
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Optional: custom shadow
+              margin: 0, // Ensure no extra margin
+              padding: 0, // Ensure no extra padding
+            },
+          }}
         >
           <MenuItem onClick={goToCandidateProfile}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
@@ -178,22 +209,30 @@ const TopBar = () => {
         </Menu>
       )}
 
-      {/* Drawer for Mobile Only */}
+      {/* Mobile Drawer */}
       {isMobile && (
         <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
           <Box className={styles.drawer}>
-            <IconButton onClick={handleDrawerToggle} className={styles.closeIcon}>
+            <IconButton
+              onClick={handleDrawerToggle}
+              className={styles.closeIcon}
+            >
               <CloseIcon />
             </IconButton>
             <List>
               {menuItems.map((item, index) => (
-                <ListItem button key={index} onClick={handleDrawerToggle}>
-                  <ListItemText primary={item} />
+                <ListItem
+                  button
+                  key={index}
+                  onClick={() => {
+                    navigate(item.path); // Navigate to the corresponding path
+                    handleDrawerToggle(); // Close drawer
+                  }}
+                >
+                  <ListItemText primary={item.label} />
                 </ListItem>
               ))}
-
               <Divider />
-
               {!user ? (
                 <>
                   <ListItem>
