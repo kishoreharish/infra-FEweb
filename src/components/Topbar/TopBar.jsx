@@ -63,13 +63,11 @@ const TopBar = () => {
   };
 
   const handleMenuIconClick = (event) => {
-    if (user) {
-      setAnchorEl(event.currentTarget);
-    }
+    setAnchorEl(event.currentTarget); // Open the menu
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(null); // Close the menu
   };
 
   const goToCandidateProfile = () => {
@@ -150,7 +148,7 @@ const TopBar = () => {
                       sx={{ width: 30, height: 30, cursor: "pointer", mx: 1 }}
                       onClick={
                         user.role === "candidate"
-                          ? goToCandidateProfile
+                          ? handleMenuIconClick // Open the menu for candidates
                           : undefined
                       }
                     />

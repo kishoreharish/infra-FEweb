@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 export const AuthContext = createContext();
 
 // AuthProvider Component
-const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // User state
   const [loading, setLoading] = useState(true); // Loading state to prevent flashing during initialization
 
@@ -75,12 +75,17 @@ const AuthProvider = ({ children }) => {
   // AuthContext value
   const value = {
     user,
+    setUser, // Include setUser for components that may need it
     login,
     logout,
     loading,
   };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children} {/* Render children only after loading */}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

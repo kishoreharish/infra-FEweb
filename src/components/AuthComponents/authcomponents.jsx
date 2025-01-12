@@ -114,54 +114,48 @@ const AuthComponents = ({ closeModal }) => {
 
   // Handle regular email/password signup
   const handleSignUp = async () => {
-    if (!profileType) {
-      setError("Please select a profile type (Candidate or Employer).");
-      return;
-    }
-  
     try {
-      const requestBody = {
-        email,
-        username: email.split("@")[0],
-        password,
-        role: profileType.toLowerCase(),
-      };
-  
-      console.log("Request Body:", requestBody);
-  
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({
+          email,
+          username: email.split("@")[0],
+          password,
+          role: profileType?.toLowerCase(),
+        }),
       });
-  
+
       const data = await response.json();
-      console.log("Backend Response:", data); // Log the backend response
-  
       if (response.ok) {
-        setUser(data.user);
-  
-        // Navigate based on role
+        console.log("Signup Successful:", data);
+
+        // Update the AuthContext
+        if (setUser) {
+          setUser(data.user); // Ensure setUser is a function
+        } else {
+          console.error("setUser is not available in AuthContext.");
+        }
+
+        // Redirect based on user role
         if (data.user.role === "employer") {
           navigate("/employer-profile");
-        } else {
+        } else if (data.user.role === "candidate") {
           navigate("/home");
         }
-  
-        closeModal();
+
+        closeModal(); // Close modal on successful signup
       } else {
-        console.error("Signup Error:", data); // Log backend error
-        setError(data.message || "Signup failed."); // Display meaningful error message
+        console.error("Signup Failed:", data);
+        setError(data.message || "Signup failed.");
       }
     } catch (error) {
       console.error("Error during signup:", error);
       setError("An unexpected error occurred.");
     }
   };
-  
-  
 
   return (
     <div className={styles.authContainer}>
