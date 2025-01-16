@@ -1,28 +1,60 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./CandidateCertificates.module.scss";
 
-const certificatesData = [
-  { title: "Certified React Developer", program: "Udemy", year: "2023" },
-  { title: "AWS Solutions Architect", program: "AWS Training", year: "2022" },
-  { title: "Frontend Master", program: "Coursera", year: "2021" },
-  { title: "Advanced JavaScript", program: "Pluralsight", year: "2020" },
-];
+const CandidateCertificates = ({ uid }) => {
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const CandidateCertificates = () => {
+  useEffect(() => {
+    const fetchCertificates = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Get the token from localStorage
+        const response = await fetch(`/api/user/certificates/${uid}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch certificates data");
+        }
+
+        const data = await response.json();
+        setCertificates(data.certificates || []); // Assume API returns { certificates: [...] }
+      } catch (err) {
+        setError(err.message || "Error loading certificates");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (uid) {
+      fetchCertificates();
+    }
+  }, [uid]);
+
+  if (loading) return <div>Loading certificates...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div className={styles.certificatesCard}>
       <h2 className={styles.title}>Certificates</h2>
       <div className={styles.certificatesGrid}>
-        {certificatesData.map((certificate, index) => (
-          <div key={index} className={styles.certificateItem}>
-            <div>
-              <h3 className={styles.certificateTitle}>{certificate.title}</h3>
-              <p className={styles.programDetails}>
-                {certificate.program} - <span className={styles.year}>{certificate.year}</span>
-              </p>
+        {certificates.length > 0 ? (
+          certificates.map((certificate, index) => (
+            <div key={index} className={styles.certificateItem}>
+              <div>
+                <h3 className={styles.certificateTitle}>{certificate.title}</h3>
+                <p className={styles.programDetails}>
+                  {certificate.program} - <span className={styles.year}>{certificate.year}</span>
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No certificates available.</p>
+        )}
       </div>
     </div>
   );

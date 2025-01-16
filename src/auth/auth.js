@@ -8,6 +8,7 @@ import {
 import { auth, firestore } from '../firebase/firebase-config';
 import { collection, doc, setDoc, onSnapshot } from 'firebase/firestore';
 import axios from 'axios';
+import React, { useState } from "react";
 
 // Google Sign-In
 export const googleLogin = async () => {
@@ -155,3 +156,52 @@ export const addMessage = async (message) => {
     throw error;
   }
 };
+
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("/api/login/", { email, password });
+      const { token, uid } = response.data;
+      const { access, refresh, user } = response.data;
+
+      // Save token and UID in localStorage
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("refreshToken", refresh);
+      localStorage.setItem("uid", uid);
+
+      // Redirect to candidate profile page
+      window.location.href = "/candidate-profile";
+    } catch (err) {
+      setError("Invalid email or password.");
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Login</button>
+        {error && <p>{error}</p>}
+      </form>
+    </div>
+  );
+};
+
+export default Login;

@@ -15,6 +15,7 @@ import { setupPushNotifications, onMessageListener } from "./firebase/pushNotifi
 import { firestore } from "./firebase/firebase-config";
 import { collection, onSnapshot } from "firebase/firestore";
 
+
 const App = () => {
   const [message, setMessage] = useState(null);
 
@@ -71,6 +72,7 @@ const App = () => {
         <Route path="/candidate-profile" element={<CandidateProfile />} />
         <Route path="/home" element={<Home />} />
         <Route path="/employer-profile" element={<EmployerProfile />} />
+        
         <Route
           path="/candidate-profile"
           element={

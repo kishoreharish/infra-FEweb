@@ -2,71 +2,21 @@ import React, { useState, useEffect, useContext } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import styles from "./authcomponents.module.scss";
 import logo from "../../assets/images/infrajobs.jpg";
-import { signInWithPopup, onAuthStateChanged, getIdToken } from "firebase/auth";
-import { auth, googleProvider, facebookProvider } from "../../firebase/firebase-config";
+import {
+  signInWithPopup,
+  onAuthStateChanged,
+  getIdToken,
+} from "firebase/auth";
+import {
+  auth,
+  googleProvider,
+  facebookProvider,
+} from "../../firebase/firebase-config";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-// Social Login Component
-const SocialLogin = ({ closeModal, profileType, setError }) => {
-  const handleSocialLogin = async (provider, providerName) => {
-    if (!["candidate", "employer"].includes(profileType?.toLowerCase())) {
-      setError("Invalid profile type. Please select 'Candidate' or 'Employer'.");
-      return;
-    }
-
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
-
-      const response = await fetch("http://127.0.0.1:8000/api/auth/social-login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id_token: idToken,
-          profile_type: profileType.toLowerCase(),
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log(`${providerName} Login Successful:`, data);
-        if (data.user.role === "employer") {
-          window.location.href = "/employer-profile";
-        } else {
-          window.location.href = "/home";
-        }
-      } else {
-        setError(data.error || `${providerName} login failed.`);
-      }
-    } catch (error) {
-      console.error(`Error during ${providerName} login:`, error);
-      setError(`Unexpected error: ${error.message}`);
-    }
-  };
-
-  return (
-    <>
-      <button
-        className={styles.socialButton1}
-        onClick={() => handleSocialLogin(googleProvider, "Google")}
-      >
-        Login with Google
-      </button>
-      <button
-        className={styles.socialButton2}
-        onClick={() => handleSocialLogin(facebookProvider, "Facebook")}
-      >
-        Login with Facebook
-      </button>
-    </>
-  );
-};
-
 const AuthComponents = ({ closeModal }) => {
-  const { login, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [email, setEmail] = useState("");
@@ -75,87 +25,119 @@ const AuthComponents = ({ closeModal }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        getIdToken(currentUser).then((idToken) => {
-          localStorage.setItem("token", idToken); // Save Firebase token
-        });
+        try {
+          const idToken = await getIdToken(currentUser);
+          const response = await fetch("http://127.0.0.1:8000/users/social-login/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_token: idToken }),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            localStorage.setItem("authToken", data.access);
+            localStorage.setItem("uid", data.user.id);
+          } else {
+            console.error("Login failed:", data);
+          }
+        } catch (error) {
+          console.error("Error during authentication:", error);
+        }
       } else {
-        localStorage.removeItem("token"); // Clear Firebase token
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("uid");
       }
     });
     return () => unsubscribe();
   }, []);
 
-  // Handle regular email/password login
-  const handleLogin = async () => {
+  const apiCall = async (url, method, body) => {
     try {
-      const loggedInUser = await login(email, password); // AuthContext login function
-
-      if (loggedInUser && loggedInUser.role) {
-        // Redirect based on user role
-        if (loggedInUser.role === "employer") {
-          navigate("/employer-profile");
-        } else if (loggedInUser.role === "candidate") {
-          navigate("/home");
-        } else {
-          setError("Unknown user role. Please contact support.");
-        }
-      } else {
-        setError("Invalid login response. Please try again.");
-      }
-
-      closeModal(); // Close the modal on successful login
-    } catch (error) {
-      console.error("Error during login:", error);
-      setError("An unexpected error occurred.");
-    }
-  };
-
-  // Handle regular email/password signup
-  const handleSignUp = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          username: email.split("@")[0],
-          password,
-          role: profileType?.toLowerCase(),
-        }),
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
-
       const data = await response.json();
-      if (response.ok) {
-        console.log("Signup Successful:", data);
-
-        // Update the AuthContext
-        if (setUser) {
-          setUser(data.user); // Ensure setUser is a function
-        } else {
-          console.error("setUser is not available in AuthContext.");
-        }
-
-        // Redirect based on user role
-        if (data.user.role === "employer") {
-          navigate("/employer-profile");
-        } else if (data.user.role === "candidate") {
-          navigate("/home");
-        }
-
-        closeModal(); // Close modal on successful signup
-      } else {
-        console.error("Signup Failed:", data);
-        setError(data.message || "Signup failed.");
-      }
+      if (!response.ok) throw new Error(data.error || "Request failed.");
+      return data;
     } catch (error) {
-      console.error("Error during signup:", error);
-      setError("An unexpected error occurred.");
+      throw new Error(error.message);
     }
   };
+
+  const handleLogin = async () => {
+    if (!profileType) {
+      setError("Please select a profile type (Candidate or Employer).");
+      return;
+    }
+  
+    const endpoint =
+      profileType.toLowerCase() === "candidate"
+        ? "http://127.0.0.1:8000/users/candidate/login/"
+        : "http://127.0.0.1:8000/users/employer/login/";
+  
+    try {
+      const data = await apiCall(endpoint, "POST", { email, password });
+  
+      // Save tokens and user data locally
+      localStorage.setItem("uid", data.user_id);
+      localStorage.setItem("authToken", data.access);
+  
+      // Update AuthContext to trigger TopBar re-render
+      setUser({
+        id: data.user_id,
+        username: data.username || "User",
+        role: profileType.toLowerCase(),
+        photoURL: data.avatar || "", // Optional, based on API response
+      });
+  
+      // Navigate based on user role
+      navigate(profileType.toLowerCase() === "employer" ? "/employer-profile" : "/home");
+  
+      // Close modal
+      closeModal?.();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
+  const handleSignUp = async () => {
+    if (!profileType) {
+      setError("Please select a profile type (Candidate or Employer).");
+      return;
+    }
+  
+    try {
+      const data = await apiCall("http://127.0.0.1:8000/users/register/", "POST", {
+        email,
+        password,
+        profile_type: profileType.toLowerCase(),
+      });
+  
+      // Save tokens and user data locally
+      localStorage.setItem("uid", data.user_id);
+      localStorage.setItem("authToken", data.access);
+  
+      // Update AuthContext to trigger TopBar re-render
+      setUser({
+        id: data.user_id,
+        username: data.username || "User",
+        role: profileType.toLowerCase(),
+        photoURL: data.avatar || "", // Optional, based on API response
+      });
+  
+      // Navigate based on user role
+      navigate(profileType.toLowerCase() === "employer" ? "/employer-profile" : "/home");
+  
+      // Close modal
+      closeModal?.();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
 
   return (
     <div className={styles.authContainer}>
@@ -278,6 +260,59 @@ const AuthComponents = ({ closeModal }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+// Social Login Component
+const SocialLogin = ({ closeModal, profileType, setError }) => {
+  const handleSocialLogin = async (provider, providerName) => {
+    if (!["candidate", "employer"].includes(profileType?.toLowerCase())) {
+      setError("Please select 'Candidate' or 'Employer'.");
+      return;
+    }
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+
+      const response = await fetch("http://127.0.0.1:8000/users/social-login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_token: idToken,
+          profile_type: profileType.toLowerCase(),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("authToken", data.access);
+        localStorage.setItem("uid", data.user.id);
+        window.location.href =
+          data.user.role === "employer" ? "/employer-profile" : "/home";
+      } else {
+        setError(data.error || `${providerName} login failed.`);
+      }
+    } catch (error) {
+      setError(`Unexpected error: ${error.message}`);
+    }
+  };
+
+  return (
+    <>
+      <button
+        className={styles.socialButton1}
+        onClick={() => handleSocialLogin(googleProvider, "Google")}
+      >
+        Login with Google
+      </button>
+      <button
+        className={styles.socialButton2}
+        onClick={() => handleSocialLogin(facebookProvider, "Facebook")}
+      >
+        Login with Facebook
+      </button>
+    </>
   );
 };
 

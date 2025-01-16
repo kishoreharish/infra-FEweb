@@ -1,7 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "./CandidateAbout.module.scss";
 
-const CandidateAbout = () => {
+const CandidateAbout = ({ userId }) => {
+  const [aboutContent, setAboutContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCandidateAbout = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("authToken"); // Assuming token is stored in localStorage
+        const response = await axios.get(`/api/candidates/${userId}/about`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token to headers
+          },
+        });
+        setAboutContent(response.data.about || "No summary available.");
+      } catch (err) {
+        setError("Failed to fetch candidate details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCandidateAbout();
+  }, [userId]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
+
   return (
     <div className={styles.aboutCard}>
       {/* Title Section */}
@@ -11,19 +45,7 @@ const CandidateAbout = () => {
 
       {/* About Content */}
       <div className={styles.contentWrapper}>
-        <p className={styles.aboutContent}>
-          I am a passionate and highly skilled Full Stack Developer with over 5
-          years of experience building web applications. I specialize in
-          JavaScript, React, Node.js, and cloud technologies like AWS. I take
-          pride in delivering scalable and user-friendly solutions that solve
-          real-world problems. My professional journey reflects dedication to
-          continuous learning and collaboration to achieve project goals.
-        </p>
-        <p className={styles.aboutContent}>
-          Outside of work, I enjoy contributing to open-source projects, writing
-          technical blogs, and mentoring aspiring developers. I believe in
-          creating a positive impact through technology and innovation.
-        </p>
+        <p className={styles.aboutContent}>{aboutContent}</p>
       </div>
     </div>
   );

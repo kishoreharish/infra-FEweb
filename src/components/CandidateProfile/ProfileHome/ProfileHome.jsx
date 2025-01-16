@@ -1,105 +1,171 @@
-import React, { useState } from "react";
-import { Tabs, Card, Collapse, Typography } from "antd";
-import { useMediaQuery } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Tabs, Card, Alert, Spin } from "antd";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import styles from "./ProfileHome.module.scss";
-import ProfileHomeAds from "../ProfileHomeAds/ProfileHomeAds";
 
 const { TabPane } = Tabs;
-const { Panel } = Collapse;
-const { Title, Paragraph } = Typography;
+
+// Dummy data for the charts
+const dummyAnalyticsData = [
+  { name: "Jobs Applied", value: 30 },
+  { name: "Selected", value: 10 },
+  { name: "Upcoming Interviews", value: 5 },
+];
 
 const ProfileHome = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const [activeKey, setActiveKey] = useState("1");
+  const [trendingJobs, setTrendingJobs] = useState([]);
+  const [recommendedJobs, setRecommendedJobs] = useState([]);
+  const [recentlySearchedJobs, setRecentlySearchedJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Job data for the sections
-  const trendingJobs = [
-    { id: 1, title: "Senior React Developer", company: "Google", location: "San Francisco" },
-    { id: 2, title: "UI/UX Designer", company: "Apple", location: "New York" },
-    { id: 3, title: "Frontend Engineer", company: "Amazon", location: "Seattle" },
-    { id: 4, title: "Backend Developer", company: "Meta", location: "Austin" },
-  ];
-  const recommendedJobs = [
-    { id: 5, title: "Cloud Solutions Architect", company: "Microsoft", location: "Boston" },
-    { id: 6, title: "DevOps Engineer", company: "Netflix", location: "Los Angeles" },
-    { id: 7, title: "System Analyst", company: "Cisco", location: "Denver" },
-  ];
-  const recentlySearchedJobs = [
-    { id: 8, title: "Product Manager", company: "Spotify", location: "Chicago" },
-    { id: 9, title: "Data Scientist", company: "IBM", location: "Austin" },
-    { id: 10, title: "QA Engineer", company: "Oracle", location: "San Diego" },
-  ];
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
 
-  const JobCard = ({ title, company, location }) => (
-    <Card className={styles.jobCard} hoverable>
-      <Title level={5} className={styles.jobTitle}>
-        {title}
-      </Title>
-      <Paragraph className={styles.jobCompany}>{company}</Paragraph>
-      <Paragraph className={styles.jobLocation}>{location}</Paragraph>
-    </Card>
-  );
+        // Simulate API response with dummy data
+        const mockResponse = {
+          trending: [
+            { id: 1, title: "Frontend Developer", company: "ABC Corp", location: "New York" },
+            { id: 2, title: "Backend Developer", company: "XYZ Ltd", location: "San Francisco" },
+          ],
+          recommended: [
+            { id: 3, title: "Full Stack Engineer", company: "Tech Giant", location: "Remote" },
+          ],
+          recent: [
+            { id: 4, title: "Data Analyst", company: "Data Inc", location: "Seattle" },
+          ],
+        };
+
+        setTrendingJobs(mockResponse.trending || []);
+        setRecommendedJobs(mockResponse.recommended || []);
+        setRecentlySearchedJobs(mockResponse.recent || []);
+      } catch (err) {
+        setError("Failed to load job data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <Spin size="large" tip="Loading Profile Home..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <Alert message={error} type="error" showIcon />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.profileHomeContainer}>
-      <div>
-        <ProfileHomeAds />
+      {/* Dummy Rectangle Image Carousel */}
+      <div className={styles.imageCarousel}>
+        <img
+          src="https://ps.w.org/jobs-portal/assets/banner-772x250.jpg?rev=2401294"
+          alt="Carousel Placeholder"
+          className={styles.carouselImage}
+        />
       </div>
-      {!isMobile ? (
-        // Tabs for larger screens
-        <Tabs
-          activeKey={activeKey}
-          onChange={setActiveKey}
-          tabBarStyle={{ fontWeight: "bold", fontSize: "1.1rem", textAlign: "left" }}
-        >
+
+      {/* Search Bar */}
+      <div className={styles.searchBar}>
+        <input
+          type="text"
+          placeholder="Search for jobs, companies, or skills..."
+          className={styles.searchInput}
+        />
+        <button className={styles.searchButton}>Search</button>
+      </div>
+
+      {/* Welcome Card */}
+      <Card className={styles.welcomeCard}>
+        <h2>Welcome, Candidate Name!</h2>
+        <p>Candidate Title</p>
+        <button className={styles.ctaButton}>Get Started</button>
+      </Card>
+
+      {/* Analytics Card */}
+      <Card className={styles.analyticsCard}>
+        <h3>Analytics</h3>
+        <div className={styles.chartContainer}>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={dummyAnalyticsData}
+                cx="50%"
+                cy="50%"
+                label
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {dummyAnalyticsData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={["#0088FE", "#00C49F", "#FFBB28"][index % 3]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Jobs Card */}
+      <Card className={styles.jobsCard}>
+        <Tabs defaultActiveKey="1">
           <TabPane tab="Trending Jobs" key="1">
-            <div className={styles.tabContent}>
+            <div className={styles.jobList}>
               {trendingJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
+                <Card key={job.id} title={job.title}>
+                  <p>{job.company}</p>
+                  <p>{job.location}</p>
+                </Card>
               ))}
             </div>
           </TabPane>
           <TabPane tab="Recommended Jobs" key="2">
-            <div className={styles.tabContent}>
+            <div className={styles.jobList}>
               {recommendedJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
+                <Card key={job.id} title={job.title}>
+                  <p>{job.company}</p>
+                  <p>{job.location}</p>
+                </Card>
               ))}
             </div>
           </TabPane>
           <TabPane tab="Recently Searched Jobs" key="3">
-            <div className={styles.tabContent}>
+            <div className={styles.jobList}>
               {recentlySearchedJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
+                <Card key={job.id} title={job.title}>
+                  <p>{job.company}</p>
+                  <p>{job.location}</p>
+                </Card>
               ))}
             </div>
           </TabPane>
         </Tabs>
-      ) : (
-        // Collapse for mobile screens
-        <Collapse accordion>
-          <Panel header="Trending Jobs" key="1">
-            <div className={styles.collapseContent}>
-              {trendingJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
-              ))}
-            </div>
-          </Panel>
-          <Panel header="Recommended Jobs" key="2">
-            <div className={styles.collapseContent}>
-              {recommendedJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
-              ))}
-            </div>
-          </Panel>
-          <Panel header="Recently Searched Jobs" key="3">
-            <div className={styles.collapseContent}>
-              {recentlySearchedJobs.map((job) => (
-                <JobCard key={job.id} {...job} />
-              ))}
-            </div>
-          </Panel>
-        </Collapse>
-      )}
+      </Card>
+
+      {/* Recent Applications Card */}
+      <Card className={styles.recentApplicationsCard}>
+        <h3>Recent Applications</h3>
+        <p>Recent application history goes here.</p>
+      </Card>
+
+      {/* Saved Jobs Card */}
+      <Card className={styles.savedJobsCard}>
+        <h3>Saved Jobs</h3>
+        <p>Saved jobs list goes here.</p>
+      </Card>
     </div>
   );
 };
