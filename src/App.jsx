@@ -14,6 +14,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import { setupPushNotifications, onMessageListener } from "./firebase/pushNotifications";
 import { firestore } from "./firebase/firebase-config";
 import { collection, onSnapshot } from "firebase/firestore";
+import MyProfile from "./components/CandidateProfile/MyProfile/MyProfile";
+import EditProfile from "./components/CandidateProfile/MyProfile/EditProfile";
+
 
 
 const App = () => {
@@ -72,7 +75,8 @@ const App = () => {
         <Route path="/candidate-profile" element={<CandidateProfile />} />
         <Route path="/home" element={<Home />} />
         <Route path="/employer-profile" element={<EmployerProfile />} />
-        
+        <Route path="/MyProfile" element={<MyProfile />} />
+        <Route path="/MyProfile/EditProfile" element={<EditProfile />} />
         <Route
           path="/candidate-profile"
           element={

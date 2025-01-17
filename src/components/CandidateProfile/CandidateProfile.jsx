@@ -4,6 +4,8 @@ import { Spin, Alert, Card, Tabs, Avatar } from "antd";
 import { UserOutlined, PhoneOutlined, MailOutlined } from "@ant-design/icons";
 import styles from "./CandidateProfile.module.scss";
 import ProfileHome from "./ProfileHome/ProfileHome";
+import MyProfile from "./MyProfile/MyProfile";
+import MyResume from "./MyResume/MyResume";
 
 const { TabPane } = Tabs;
 
@@ -100,29 +102,12 @@ const CandidateProfile = () => {
         </TabPane>
 
         <TabPane tab="My Profile" key="2">
-          <div className={styles.tabContent}>
-            <h3>My Profile</h3>
-            <p>
-              <strong>Skills:</strong>
-              <ul>
-                {userData.skills
-                  ? userData.skills.split(",").map((skill, index) => (
-                      <li key={index}>{skill.trim()}</li>
-                    ))
-                  : "No skills provided."}
-              </ul>
-            </p>
-            <p>
-              <strong>Languages:</strong> {userData.languages || "No languages provided."}
-            </p>
-          </div>
+          <MyProfile userData={userData} />
+          
         </TabPane>
 
         <TabPane tab="My Resume" key="3">
-          <div className={styles.tabContent}>
-            <h3>My Resume</h3>
-            <p>{userData.resume || "No resume uploaded yet."}</p>
-          </div>
+          <MyResume userData={userData} />
         </TabPane>
 
         <TabPane tab="My Jobs" key="4">

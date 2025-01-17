@@ -1,0 +1,155 @@
+.popupContainer {
+  position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 16px;
+    width: 500px; /* Adjust based on your needs */
+    max-width: 90%;
+}
+
+.popupContent {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden; /* Prevent horizontal overflow */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
+
+.editButton {
+  background-color: #0bc568;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.errorMessage {
+  color: red;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.scrollableContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+}
+
+.form {
+  .formGroup {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 0.9rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+
+  .formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+
+      &:nth-child(1) {
+        background-color: #ddd;
+        color: #555;
+
+        &:hover {
+          background-color: #ccc;
+        }
+      }
+
+      &:nth-child(2) {
+        background-color: #007bff;
+        color: #fff;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+    }
+  }
+}
