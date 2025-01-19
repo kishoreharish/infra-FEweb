@@ -19,7 +19,9 @@ import ToolIcon from "@mui/icons-material/Build";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
+import Jobs from "../../components/EmployerProfile/Jobs/jobs";
+import PostAJob from "../../components/EmployerProfile/Postajob/Postajob";
 
 const Sidebar = styled(Box)(({ theme }) => ({
   width: 240,
@@ -38,8 +40,9 @@ const MainContent = styled(Box)(({ theme }) => ({
 
 const EmployerProfile = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const { logout } = useContext(AuthContext); // Get logout from AuthContext
-  const navigate = useNavigate(); // Initialize navigate
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [showPostJob, setShowPostJob] = useState(false);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -47,8 +50,8 @@ const EmployerProfile = () => {
 
   const handleLogout = async () => {
     try {
-      await logout(); // Call logout from AuthContext
-      navigate("/"); // Redirect to home screen after logout
+      await logout();
+      navigate("/");
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -56,7 +59,6 @@ const EmployerProfile = () => {
 
   return (
     <Box display="flex">
-      {/* Sidebar */}
       <Sidebar>
         <Typography variant="h6" gutterBottom>
           InfraJobs
@@ -89,9 +91,7 @@ const EmployerProfile = () => {
         </List>
       </Sidebar>
 
-      {/* Main Content */}
       <MainContent>
-        {/* Top Navigation */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Box display="flex" alignItems="center">
             <MenuIcon style={{ marginRight: "10px" }} />
@@ -99,45 +99,19 @@ const EmployerProfile = () => {
           </Box>
           <Box display="flex" alignItems="center">
             <NotificationsIcon style={{ marginRight: "15px", cursor: "pointer" }} />
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={() => setShowPostJob(true)}>
               Post a Job
             </Button>
           </Box>
         </Box>
 
-        {/* Tabs */}
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-        >
+        <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
           <Tab label="Open and Paused (0)" />
           <Tab label="Closed (1)" />
         </Tabs>
 
-        {/* Tab Content */}
-        {activeTab === 0 ? (
-          <Box textAlign="center" mt={5}>
-            <img
-              src="https://via.placeholder.com/150"
-              alt="No jobs"
-              style={{ marginBottom: "20px" }}
-            />
-            <Typography variant="body1">
-              We couldn’t find any jobs that match your search criteria.
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Update your search and try again.
-            </Typography>
-          </Box>
-        ) : (
-          <Box mt={5}>
-            <Typography variant="body1">Closed Jobs will appear here.</Typography>
-          </Box>
-        )}
+        {activeTab === 0 ? <Jobs /> : <Typography variant="body1">Closed Jobs will appear here.</Typography>}
 
-        {/* Billing Section */}
         <Box mt={5}>
           <Typography variant="h6">Manage Billing Details</Typography>
           <Divider />
@@ -157,6 +131,8 @@ const EmployerProfile = () => {
           </List>
         </Box>
       </MainContent>
+
+      {showPostJob && <PostAJob closePopup={() => setShowPostJob(false)} refreshJobs={() => {}} />}
     </Box>
   );
 };

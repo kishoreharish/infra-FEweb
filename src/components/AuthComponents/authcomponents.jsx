@@ -116,22 +116,23 @@ const AuthComponents = ({ closeModal }) => {
         profile_type: profileType.toLowerCase(),
       });
   
-      // Save tokens and user data locally
-      localStorage.setItem("uid", data.user_id);
-      localStorage.setItem("authToken", data.access);
+      if (data.access) {
+        localStorage.setItem("authToken", data.access);  // Store access token
+        localStorage.setItem("refreshToken", data.refresh);  // Store refresh token
+        localStorage.setItem("uid", data.user_id);
+      } else {
+        setError("Signup successful, but no access token received.");
+        return;
+      }
   
-      // Update AuthContext to trigger TopBar re-render
       setUser({
         id: data.user_id,
         username: data.username || "User",
         role: profileType.toLowerCase(),
-        photoURL: data.avatar || "", // Optional, based on API response
+        photoURL: data.avatar || "", 
       });
   
-      // Navigate based on user role
       navigate(profileType.toLowerCase() === "employer" ? "/employer-profile" : "/home");
-  
-      // Close modal
       closeModal?.();
     } catch (error) {
       setError(error.message);
