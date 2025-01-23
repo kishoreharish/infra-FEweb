@@ -8,20 +8,22 @@ import {
   Divider,
   Tabs,
   Tab,
-  Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import WorkIcon from "@mui/icons-material/Work";
-import CallIcon from "@mui/icons-material/Call";
 import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import ToolIcon from "@mui/icons-material/Build";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MenuIcon from "@mui/icons-material/Menu";
+import BusinessIcon from "@mui/icons-material/Business";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import Jobs from "../../components/EmployerProfile/Jobs/jobs";
 import PostAJob from "../../components/EmployerProfile/Postajob/Postajob";
+import EmployerDashboard from "../../components/EmployerProfile/Dashboard/EmployerDashboard/EmployerDashboard";
+import Candidates from "../../components/EmployerProfile/Candidates/Candidates";
+import ShortlistedResume from "../../components/EmployerProfile/ShortlistedResumes/ShortlistedResume";
+import CompanyProfile from "../../components/EmployerProfile/CompanyProfile/CompanyProfile";
+import ManageJobs from "../../components/EmployerProfile/ManageJobs/ManageJobs";
 
 const Sidebar = styled(Box)(({ theme }) => ({
   width: 240,
@@ -39,13 +41,12 @@ const MainContent = styled(Box)(({ theme }) => ({
 }));
 
 const EmployerProfile = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState("dashboard");
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [showPostJob, setShowPostJob] = useState(false);
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
   };
 
   const handleLogout = async () => {
@@ -64,75 +65,73 @@ const EmployerProfile = () => {
           InfraJobs
         </Typography>
         <List>
-          <ListItem button>
+          <ListItem button onClick={() => handleTabChange("dashboard")}>
+            <DashboardIcon style={{ marginRight: "10px" }} />
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+          <ListItem button onClick={() => handleTabChange("postJob")}>
             <WorkIcon style={{ marginRight: "10px" }} />
-            <ListItemText primary="Jobs" />
+            <ListItemText primary="Post a Job" />
           </ListItem>
-          <ListItem button>
-            <CallIcon style={{ marginRight: "10px" }} />
-            <ListItemText primary="Phone Calls" />
+          <ListItem button onClick={() => handleTabChange("manageJobs")}>
+            <WorkIcon style={{ marginRight: "10px" }} />
+            <ListItemText primary="Manage Jobs" />
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => handleTabChange("candidates")}>
             <PeopleIcon style={{ marginRight: "10px" }} />
             <ListItemText primary="Candidates" />
           </ListItem>
-          <ListItem button>
-            <BarChartIcon style={{ marginRight: "10px" }} />
-            <ListItemText primary="Analytics" />
+          <ListItem button onClick={() => handleTabChange("shortlisted")}>
+            <PeopleIcon style={{ marginRight: "10px" }} />
+            <ListItemText primary="Shortlisted Resumes" />
           </ListItem>
-          <ListItem button>
-            <ToolIcon style={{ marginRight: "10px" }} />
-            <ListItemText primary="Tools" />
+          <ListItem button onClick={() => handleTabChange("companyProfile")}>
+            <BusinessIcon style={{ marginRight: "10px" }} />
+            <ListItemText primary="Company Profile" />
           </ListItem>
           <Divider />
+          <ListItem button>
+            <SettingsIcon style={{ marginRight: "10px" }} />
+            <ListItemText primary="Settings" />
+          </ListItem>
           <ListItem button onClick={handleLogout}>
+            <LogoutIcon style={{ marginRight: "10px" }} />
             <ListItemText primary="Logout" />
           </ListItem>
         </List>
       </Sidebar>
 
       <MainContent>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Box display="flex" alignItems="center">
-            <MenuIcon style={{ marginRight: "10px" }} />
-            <Typography variant="h6">Jobs</Typography>
-          </Box>
-          <Box display="flex" alignItems="center">
-            <NotificationsIcon style={{ marginRight: "15px", cursor: "pointer" }} />
-            <Button variant="contained" color="primary" onClick={() => setShowPostJob(true)}>
-              Post a Job
-            </Button>
-          </Box>
-        </Box>
-
-        <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
-          <Tab label="Open and Paused (0)" />
-          <Tab label="Closed (1)" />
-        </Tabs>
-
-        {activeTab === 0 ? <Jobs /> : <Typography variant="body1">Closed Jobs will appear here.</Typography>}
-
-        <Box mt={5}>
-          <Typography variant="h6">Manage Billing Details</Typography>
-          <Divider />
-          <List>
-            <ListItem button>
-              <ListItemText primary="View billing history" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Update payment method" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="View performance report" />
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="Update monthly budget limit" />
-            </ListItem>
-          </List>
-        </Box>
+        {activeTab === "dashboard" && 
+        <div>
+          {/* <Typography variant="h4">Welcome to the Dashboard</Typography> */}
+          <EmployerDashboard />
+        </div>
+        }
+        {activeTab === "postJob" && <PostAJob />}
+        {activeTab === "manageJobs" && 
+        <div><ManageJobs />
+        </div>
+        }
+        {activeTab === "candidates" && 
+        <div>
+          {/* <Typography variant="h4">Candidates Section</Typography> */}
+          <Candidates />
+          </div>
+          }
+        {activeTab === "shortlisted" && 
+        <div>
+          {/* <Typography variant="h4">Shortlisted Resumes</Typography> */}
+          <ShortlistedResume />
+          </div>
+          }
+        {activeTab === "companyProfile" && 
+        <div>
+          {/* <Typography variant="h4">Company Profile Section</Typography> */}
+          <CompanyProfile />
+          </div>
+          }
       </MainContent>
-
-      {showPostJob && <PostAJob closePopup={() => setShowPostJob(false)} refreshJobs={() => {}} />}
     </Box>
   );
 };

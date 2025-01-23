@@ -1,0 +1,52 @@
+.dashboardContainer {
+    padding: 20px;
+    background-color: #f9f9f9;
+
+  }
+  
+  .dashboardTitle {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .dashboardSubtitle {
+    margin-bottom: 20px;
+  }
+  
+  .summaryCards {
+    .card {
+      text-align: center;
+      padding: 20px;
+      .cardIcon {
+        font-size: 40px;
+        color: #2196f3;
+      }
+      .cardNumber {
+        font-size: 28px;
+        font-weight: bold;
+      }
+    }
+  }
+  
+  .analyticsSection {
+    margin-top: 20px;
+  }
+  
+  .sectionTitle {
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+  
+  .applicantCard {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    .avatar {
+      width: 60px;
+      height: 60px;
+    }
+    .actionButton {
+      margin-right: 10px;
+    }
+  }
+  
