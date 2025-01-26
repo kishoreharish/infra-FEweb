@@ -15,10 +15,9 @@ import {
   Select,
   CircularProgress
 } from "@mui/material";
-
-import DeleteIcon from "@mui/icons-material/Delete";
-
 import JobDetails from "./JobDetials";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -26,13 +25,7 @@ const ManageJobs = () => {
   const [filter, setFilter] = useState("Last 6 Months");
   const [selectedJob, setSelectedJob] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-
-  const handleViewJob = (job) => {
-    setSelectedJob(job);
-    setOpenDialog(true);
-  };
-
-
+  const [deleting] = useState(false);
 
   useEffect(() => {
     fetchJobs();
@@ -54,6 +47,29 @@ const ManageJobs = () => {
       setLoading(false);
     }
   };
+
+  const handleViewJob = (job) => {
+    setSelectedJob(job);
+    setOpenDialog(true);
+  };
+
+  const handleDelete = async (jobId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.delete(`http://127.0.0.1:8000/jobs/${jobId}/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+      console.log("Job deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting job:", error.response?.data || error.message);
+    }
+  };
+  
+  
 
   return (
     <div className={styles.container}>
@@ -110,10 +126,19 @@ const ManageJobs = () => {
                     <TableCell className={styles.status}>
                       {new Date(job.expire_date) < new Date() ? "Inactive" : "Active"}
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <div className={styles.actionButtons}>
-                      <Button onClick={() => handleViewJob(job)}>View/Edit</Button>
-                      <Button><DeleteIcon /></Button>
+                        <Button onClick={() => handleViewJob(job)}>View/Edit</Button>
+                        {/* <IconButton 
+  onClick={() => handleDelete(job.id)} 
+  color="error" 
+  disabled={deleting}
+>
+  <DeleteIcon />
+</IconButton> */}
+                        <Button onClick={() => handleDelete(job.id)} 
+  color="error" 
+  disabled={deleting}><DeleteIcon /></Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -127,18 +152,16 @@ const ManageJobs = () => {
               )}
             </TableBody>
             {selectedJob && (
-      <JobDetails 
-        open={openDialog} 
-        onClose={() => setOpenDialog(false)} 
-        jobData={selectedJob} 
-        onSave={(updatedJob) => {
-          console.log("Updated Job Data: ", updatedJob);
-          // Update jobs list with the edited data
-          setJobs((prevJobs) => prevJobs.map(j => j.id === updatedJob.id ? updatedJob : j));
-          setOpenDialog(false);
-        }}
-      />
-    )}
+              <JobDetails 
+                open={openDialog} 
+                onClose={() => setOpenDialog(false)} 
+                jobData={selectedJob} 
+                onSave={(updatedJob) => {
+                  setJobs((prevJobs) => prevJobs.map(j => j.id === updatedJob.id ? updatedJob : j));
+                  setOpenDialog(false);
+                }}
+              />
+            )}
           </Table>
         </TableContainer>
       )}

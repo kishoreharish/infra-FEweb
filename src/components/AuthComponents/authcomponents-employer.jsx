@@ -15,7 +15,7 @@ import {
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const AuthComponents = ({ closeModal }) => {
+const AuthComponentsEmployer = ({ closeModal }) => {
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
@@ -31,7 +31,7 @@ const AuthComponents = ({ closeModal }) => {
           const response = await fetch("http://127.0.0.1:8000/users/social-login/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_token: idToken, profile_type: "candidate" }),
+            body: JSON.stringify({ id_token: idToken }),
           });
           const data = await response.json();
           if (response.ok) {
@@ -67,10 +67,10 @@ const AuthComponents = ({ closeModal }) => {
   };
 
   const handleLogin = async () => {
-    const endpoint = "http://127.0.0.1:8000/users/candidate/login/";
+    const endpoint = "http://127.0.0.1:8000/users/employer/login/";
 
     try {
-      const data = await apiCall(endpoint, "POST", { email, password, profile_type: "candidate" });
+      const data = await apiCall(endpoint, "POST", { email, password });
 
       // Save tokens and user data locally
       localStorage.setItem("uid", data.user_id);
@@ -80,12 +80,12 @@ const AuthComponents = ({ closeModal }) => {
       setUser({
         id: data.user_id,
         username: data.username || "User",
-        role: "candidate",
-        photoURL: data.avatar || "",
+        role: "employer",
+        photoURL: data.avatar || "", // Optional, based on API response
       });
 
-      // Navigate to candidate home page
-      navigate("/home");
+      // Navigate to employer profile
+      navigate("/employer-profile");
 
       // Close modal
       closeModal?.();
@@ -99,7 +99,7 @@ const AuthComponents = ({ closeModal }) => {
       const data = await apiCall("http://127.0.0.1:8000/users/register/", "POST", {
         email,
         password,
-        profile_type: "candidate",
+        profile_type: "employer",
       });
 
       if (data.access) {
@@ -114,12 +114,12 @@ const AuthComponents = ({ closeModal }) => {
       setUser({
         id: data.user_id,
         username: data.username || "User",
-        role: "candidate",
+        role: "employer",
         photoURL: data.avatar || "",
       });
 
-      // Redirect to candidate home page
-      navigate("/home");
+      // Redirect to employer profile
+      navigate("/employer-profile");
 
       // Close modal
       closeModal?.();
@@ -140,8 +140,9 @@ const AuthComponents = ({ closeModal }) => {
 
         {showLogin ? (
           <div className={styles.authContent}>
-            <h2>Candidate Login</h2>
+            <h2>Login As Employer</h2>
             <p>Enter your email and password to log in</p>
+
             {error && <p className={styles.errorText}>{error}</p>}
             <input
               type="email"
@@ -164,8 +165,9 @@ const AuthComponents = ({ closeModal }) => {
           </div>
         ) : (
           <div className={styles.authContent}>
-            <h2>Candidate Sign Up</h2>
-            <p>Create an account and start applying for jobs</p>
+            <h2>Sign Up As Employer</h2>
+            <p>Create an account</p>
+
             {error && <p className={styles.errorText}>{error}</p>}
             <input
               type="email"
@@ -197,7 +199,7 @@ const AuthComponents = ({ closeModal }) => {
         />
         <div className={styles.card}>
           <h3>Welcome to InfraJobs</h3>
-          <p>Find Your Dream Job</p>
+          <p>Connecting Employers</p>
         </div>
       </div>
     </div>
@@ -216,7 +218,7 @@ const SocialLogin = ({ closeModal, setError }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id_token: idToken,
-          profile_type: "candidate",
+          profile_type: "employer",
         }),
       });
 
@@ -224,7 +226,7 @@ const SocialLogin = ({ closeModal, setError }) => {
       if (response.ok) {
         localStorage.setItem("authToken", data.access);
         localStorage.setItem("uid", data.user.id);
-        window.location.href = "/home";
+        window.location.href = "/employer-profile";
       } else {
         setError(data.error || `${providerName} login failed.`);
       }
@@ -245,4 +247,4 @@ const SocialLogin = ({ closeModal, setError }) => {
   );
 };
 
-export default AuthComponents;
+export default AuthComponentsEmployer;

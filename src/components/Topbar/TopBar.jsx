@@ -25,6 +25,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import styles from "./Topbar.module.scss";
 import logo from "../../assets/images/infrajobs.jpg";
 import AuthComponents from "../AuthComponents/authcomponents";
+import AuthComponentsEmployer from "../AuthComponents/authcomponents-employer";
 
 const TopBar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -39,6 +40,7 @@ const TopBar = () => {
     { label: "Companies", path: "/companies" },
     { label: "Services", path: "/services" },
   ];
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
@@ -54,7 +56,7 @@ const TopBar = () => {
   };
 
   const handleJobPostClick = () => {
-    setModalContent("jobPost");
+    setModalContent("employer");
     setShowModal(true);
   };
 
@@ -63,16 +65,21 @@ const TopBar = () => {
   };
 
   const handleMenuIconClick = (event) => {
-    setAnchorEl(event.currentTarget); // Open the menu
+    setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null); // Close the menu
+    setAnchorEl(null);
   };
 
   const goToCandidateProfile = () => {
     handleMenuClose();
     navigate("/candidate-profile");
+  };
+
+  const goToEmployerProfile = () => {
+    handleMenuClose();
+    navigate("/employer-profile");
   };
 
   const handleLogout = async () => {
@@ -146,17 +153,8 @@ const TopBar = () => {
                       alt={user.username || "User"}
                       src={user.photoURL || ""}
                       sx={{ width: 30, height: 30, cursor: "pointer", mx: 1 }}
-                      onClick={
-                        user.role === "candidate"
-                          ? handleMenuIconClick // Open the menu for candidates
-                          : undefined
-                      }
+                      onClick={handleMenuIconClick}
                     />
-                    {user.role === "candidate" && (
-                      <IconButton onClick={handleMenuIconClick}>
-                        <MenuIcon />
-                      </IconButton>
-                    )}
                   </Box>
                 )}
               </Box>
@@ -171,7 +169,7 @@ const TopBar = () => {
         </Box>
       </AppBar>
 
-      {user && user.role === "candidate" && (
+      {user && (
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
@@ -193,19 +191,27 @@ const TopBar = () => {
             },
           }}
         >
-          <MenuItem onClick={goToCandidateProfile}>Profile</MenuItem>
-          <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          {user.role === "candidate" && (
+            <>
+              <MenuItem onClick={goToCandidateProfile}>Candidate Profile</MenuItem>
+              <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </>
+          )}
+          {user.role === "employer" && (
+            <>
+              <MenuItem onClick={goToEmployerProfile}>Employer Profile</MenuItem>
+              <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </>
+          )}
         </Menu>
       )}
 
       {isMobile && (
         <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
           <Box className={styles.drawer}>
-            <IconButton
-              onClick={handleDrawerToggle}
-              className={styles.closeIcon}
-            >
+            <IconButton onClick={handleDrawerToggle} className={styles.closeIcon}>
               <CloseIcon />
             </IconButton>
             <List>
@@ -250,17 +256,21 @@ const TopBar = () => {
                 </>
               ) : (
                 <>
-                  <ListItem button onClick={goToCandidateProfile}>
-                    <ListItemText primary="Profile" />
-                  </ListItem>
+                  {user.role === "candidate" && (
+                    <ListItem button onClick={goToCandidateProfile}>
+                      <ListItemText primary="Candidate Profile" />
+                    </ListItem>
+                  )}
+                  {user.role === "employer" && (
+                    <ListItem button onClick={goToEmployerProfile}>
+                      <ListItemText primary="Employer Profile" />
+                    </ListItem>
+                  )}
                   <ListItem button>
                     <ListItemText primary="Settings" />
                   </ListItem>
                   <ListItem>
-                    <button
-                      className={styles.drawerButtonOutline}
-                      onClick={handleLogout}
-                    >
+                    <button className={styles.drawerButtonOutline} onClick={handleLogout}>
                       Logout
                     </button>
                   </ListItem>
@@ -272,17 +282,13 @@ const TopBar = () => {
       )}
 
       {showModal && (
-        <div
-          className={styles.modalOverlay}
-          style={{ zIndex: 1300 }}
-          onClick={handleCloseModal}
-        >
-          <div
-            className={styles.modalContent}
-            style={{ zIndex: 1301 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <AuthComponents closeModal={handleCloseModal} />
+        <div className={styles.modalOverlay} onClick={handleCloseModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            {modalContent === "login" ? (
+              <AuthComponents closeModal={handleCloseModal} />
+            ) : (
+              <AuthComponentsEmployer closeModal={handleCloseModal} />
+            )}
           </div>
         </div>
       )}

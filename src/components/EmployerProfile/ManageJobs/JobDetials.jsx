@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./JobDetails.module.scss";
 import { 
   Dialog, 
@@ -21,13 +21,22 @@ const JobDetails = ({ open, onClose, jobData, onSave }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (open) {
+      setFormData(jobData);
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      setIsEditing(false);
+    }
+  }, [open, jobData]);
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
   
     if (name === "company_logo" && files.length > 0) {
       setFormData((prevData) => ({
         ...prevData,
-        company_logo: files[0],  // Store the file object directly
+        company_logo: files[0],  
       }));
     } else {
       setFormData((prevData) => ({
@@ -36,7 +45,6 @@ const JobDetails = ({ open, onClose, jobData, onSave }) => {
       }));
     }
   };
-  
 
   const handleSave = async () => {
     setSuccessMessage(null);
@@ -45,11 +53,12 @@ const JobDetails = ({ open, onClose, jobData, onSave }) => {
   
     try {
       const updatedData = new FormData();
-      
-      // Add text fields
+  
       Object.keys(formData).forEach((key) => {
-        if (key === "company_logo" && formData[key] instanceof File) {
-          updatedData.append(key, formData[key]);  // Append file properly
+        if (key === "company_logo") {
+          if (formData.company_logo instanceof File) {
+            updatedData.append(key, formData.company_logo);
+          }
         } else {
           updatedData.append(key, formData[key]);
         }
@@ -66,14 +75,20 @@ const JobDetails = ({ open, onClose, jobData, onSave }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",  // Important for file uploads
+            "Content-Type": "multipart/form-data",
           },
         }
       );
   
       console.log("API Response:", response.data);
       setSuccessMessage("Job updated successfully!");
+  
       onSave(formData);
+  
+      // Add a delay before closing the dialog to allow the success message to be visible
+      setTimeout(() => {
+        onClose();
+      }, 2000);  // 2 seconds delay
     } catch (error) {
       console.error("Error updating job:", error);
       setErrorMessage(
@@ -84,6 +99,8 @@ const JobDetails = ({ open, onClose, jobData, onSave }) => {
       setLoading(false);
     }
   };
+  
+  
   
 
   return (
@@ -191,38 +208,37 @@ const JobDetails = ({ open, onClose, jobData, onSave }) => {
             className={styles.inputField}
           />
 
-<Typography variant="body2" className={styles.sectionTitle}>Company Logo:</Typography>
-{!isEditing ? (
-  <img 
-    src={formData.company_logo.startsWith('http') ? formData.company_logo : `http://127.0.0.1:8000${formData.company_logo}`} 
-    alt="Company Logo" 
-    className={styles.companyLogo} 
-  />
-) : (
-  <>
-    {formData.company_logo && typeof formData.company_logo === "string" ? (
-      <img 
-        src={`http://127.0.0.1:8000${formData.company_logo}`} 
-        alt="Preview" 
-        className={styles.companyLogo} 
-      />
-    ) : formData.company_logo instanceof File ? (
-      <img 
-        src={URL.createObjectURL(formData.company_logo)} 
-        alt="Preview" 
-        className={styles.companyLogo} 
-      />
-    ) : null}
+          <Typography variant="body2" className={styles.sectionTitle}>Company Logo:</Typography>
+          {!isEditing ? (
+            <img 
+              src={formData.company_logo.startsWith('http') ? formData.company_logo : `http://127.0.0.1:8000${formData.company_logo}`} 
+              alt="Company Logo" 
+              className={styles.companyLogo} 
+            />
+          ) : (
+            <>
+              {formData.company_logo && typeof formData.company_logo === "string" ? (
+                <img 
+                  src={`http://127.0.0.1:8000${formData.company_logo}`} 
+                  alt="Preview" 
+                  className={styles.companyLogo} 
+                />
+              ) : formData.company_logo instanceof File ? (
+                <img 
+                  src={URL.createObjectURL(formData.company_logo)} 
+                  alt="Preview" 
+                  className={styles.companyLogo} 
+                />
+              ) : null}
 
-    <Input 
-      type="file" 
-      name="company_logo" 
-      onChange={handleChange} 
-      fullWidth 
-    />
-  </>
-)}
-
+              <Input 
+                type="file" 
+                name="company_logo" 
+                onChange={handleChange} 
+                fullWidth 
+              />
+            </>
+          )}
         </Box>
       </DialogContent>
       <DialogActions className={styles.actions}>
