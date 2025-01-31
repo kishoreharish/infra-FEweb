@@ -6,6 +6,7 @@ import styles from "./CandidateProfile.module.scss";
 import ProfileHome from "./ProfileHome/ProfileHome";
 import MyProfile from "./MyProfile/MyProfile";
 import MyResume from "./MyResume/MyResume";
+import MyJobs from "../Jobs/MyJobs";
 
 const { TabPane } = Tabs;
 
@@ -113,7 +114,8 @@ const CandidateProfile = () => {
         <TabPane tab="My Jobs" key="4">
           <div className={styles.tabContent}>
             <h3>My Jobs</h3>
-            <p>{userData.jobs || "No job applications found."}</p>
+            <MyJobs />
+            {/* <p>{userData.jobs || "No job applications found."}</p> */}
           </div>
         </TabPane>
       </Tabs>

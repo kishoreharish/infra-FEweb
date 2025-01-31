@@ -16,6 +16,8 @@ import { firestore } from "./firebase/firebase-config";
 import { collection, onSnapshot } from "firebase/firestore";
 import MyProfile from "./components/CandidateProfile/MyProfile/MyProfile";
 import EditProfile from "./components/CandidateProfile/MyProfile/EditProfile";
+import JobDetails from "./components/Jobs/JobDetails";
+import FullCardList from "./components/FullCard/fullcard";
 
 
 
@@ -77,6 +79,10 @@ const App = () => {
         <Route path="/employer-profile" element={<EmployerProfile />} />
         <Route path="/MyProfile" element={<MyProfile />} />
         <Route path="/MyProfile/EditProfile" element={<EditProfile />} />
+        {/* <Route path="/" element={<FullCardList />} /> */}
+        <Route path="/" element={<FullCardList />} />
+
+        <Route path="/job-details/:id" element={<JobDetails />} />
         <Route
           path="/candidate-profile"
           element={

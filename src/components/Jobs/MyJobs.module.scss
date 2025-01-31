@@ -1,0 +1,105 @@
+.container {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .heading {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .jobsContainer {
+    display: flex;
+    flex-direction: column; // ✅ Ensures jobs appear in full-width rows
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .jobCard {
+    width: 100%; // ✅ Makes each job card full width
+    max-width: 900px; // ✅ Restricts width on larger screens
+    padding: 15px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.2s ease-in-out;
+    display: flex; // ✅ Makes content align in a row
+    align-items: center;
+    gap: 20px;
+  
+    &:hover {
+      transform: translateY(-3px);
+    }
+  
+    .jobInfo {
+      flex: 1; // ✅ Ensures text takes up remaining space
+    }
+  
+    .jobTitle {
+      font-size: 20px;
+      font-weight: 600;
+    }
+  
+    .company {
+      font-size: 14px;
+      color: #666;
+    }
+  
+    .location {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 5px 0;
+    }
+  
+    .salary {
+      font-size: 16px;
+      font-weight: bold;
+      color: #007bff;
+    }
+  
+    .viewButton {
+      margin-left: auto; // ✅ Moves button to the right
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      transition: background 0.2s ease-in-out;
+      
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .jobCard {
+      max-width: 95%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .jobCard {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 15px;
+    }
+  
+    .viewButton {
+      width: 100%; // ✅ Full-width button on mobile
+      margin-left: 0;
+      text-align: center;
+    }
+  }
+  

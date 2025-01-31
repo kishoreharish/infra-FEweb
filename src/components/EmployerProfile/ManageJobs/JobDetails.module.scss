@@ -1,45 +1,36 @@
-.dialogTitle {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    color: #1976d2;
+.jobDetailsContainer {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.companyName {
+  color: #007bff;
+  font-size: 18px;
+}
+
+.salary {
+  color: #28a745;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.locationChip {
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 10px 0;
+}
+
+.applyButton {
+  margin-top: 20px;
+  background-color: #007bff;
+  color: white;
+  &:hover {
+    background-color: #0056b3;
   }
-  
-  .detailsContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1rem;
-  }
-  
-  .sectionTitle {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.5rem;
-  }
-  
-  .inputField {
-    background-color: #f9f9f9;
-    border-radius: 5px;
-  }
-  
-  .companyLogo {
-    max-width: 200px;
-    height: auto;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 1rem;
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-  }
-  
-  .actions button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-  }
-  
+}
+
+.backButton {
+  margin-left: 10px;
+  color: #333;
+}

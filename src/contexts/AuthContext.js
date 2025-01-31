@@ -1,81 +1,96 @@
 import React, { createContext, useState, useEffect } from "react";
 import { auth } from "../firebase/firebase-config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import axios from "axios";
 
-// Create the AuthContext
 export const AuthContext = createContext();
 
-// AuthProvider Component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // User state
-  const [loading, setLoading] = useState(true); // Loading state to prevent flashing during initialization
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Monitor Firebase Authentication state
+  // ✅ Ensure token is loaded from local storage
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        currentUser.getIdTokenResult().then((idTokenResult) => {
-          setUser({
-            uid: currentUser.uid,
-            email: currentUser.email,
-            role: idTokenResult.claims.role || "candidate", // Role if custom claims are set
-          });
-        });
-      } else {
-        setUser(null);
-      }
-      setLoading(false); // End loading once auth state is determined
-    });
-
-    return () => unsubscribe(); // Cleanup subscription on unmount
+    const tokenFromStorage = localStorage.getItem("authToken");
+    if (tokenFromStorage && !authToken) {
+      setAuthToken(tokenFromStorage);
+    }
   }, []);
 
-  // Login function
+  // ✅ Fetch User Data When Token is Available
+  useEffect(() => {
+    console.log("🔄 Checking Auth Token:", authToken);
+
+    if (!authToken) {
+      setLoading(false);
+      return;
+    }
+
+    axios
+      .get("http://127.0.0.1:8000/api/user-profile/", {
+        headers: { Authorization: `Bearer ${authToken}` },
+      })
+      .then(response => {
+        console.log("🟢 User Data:", response.data);
+        setUser(response.data);
+      })
+      .catch(error => {
+        console.error("❌ Error fetching user:", error);
+        setAuthToken(null);
+        localStorage.removeItem("authToken");
+      })
+      .finally(() => setLoading(false));
+  }, [authToken]);
+
+  // ✅ Login Function
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post("http://127.0.0.1:8000/api/login/", {
+        email,
+        password,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed.");
+      if (response.status !== 200) {
+        throw new Error("Login failed. Please check your credentials.");
       }
 
-      const data = await response.json();
+      const data = response.data;
+      localStorage.setItem("authToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
 
-      // Save the tokens and user details
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
-      setUser(data.user); // Update the AuthContext with the logged-in user
+      setAuthToken(data.access);
+      setUser(data.user);
+      console.log("✅ Login Successful:", data.user);
 
-      return data.user; // Return the user object
+      return data.user;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("❌ Login Error:", error);
       throw error;
     }
   };
 
-  // Logout function
+  // ✅ Logout Function
   const logout = async () => {
     try {
-      await signOut(auth); // Firebase sign out
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      setUser(null); // Reset user state
+      await signOut(auth); // Firebase Signout
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("refreshToken");
+
+      setAuthToken(null);
+      setUser(null);
+      console.log("✅ Successfully Logged Out");
     } catch (error) {
-      console.error("Logout error:", error.message);
+      console.error("❌ Logout Error:", error.message);
     }
   };
 
-  // AuthContext value
+  // ✅ AuthContext Value
   const value = {
     user,
-    setUser, // Include setUser for components that may need it
+    authToken,
+    setUser,
+    setAuthToken,
     login,
     logout,
     loading,
@@ -83,7 +98,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children} {/* Render children only after loading */}
+      {!loading && children} {/* Only render children after loading is complete */}
     </AuthContext.Provider>
   );
 };

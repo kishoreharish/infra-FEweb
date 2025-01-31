@@ -1,53 +1,128 @@
-.full-card-container {
-    padding: 16px; /* Add some padding around the main container */
-    
+.jobContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
 
-
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-    }
+.jobCard {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: 0.3s ease-in-out;
   
-    .parent-card {
-      background-color: #f5f5f5; /* Light gray background */
-      border-radius: 8px; /* Slightly rounded corners */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-      font-size: 16px;
-      width: 100%;
-  
-      .ant-card-head {
-        background-color: #ffffff; /* Different background for the header */
-        border-bottom: 1px solid #e8e8e8;
-        font-weight: bold;
-      }
-  
-      .inner-card {
-        background-color: #ffffff;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-  
-        &:hover {
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12); /* Slightly stronger shadow on hover */
-          transform: translateY(-2px); /* Lift effect */
-        }
-  
-        .ant-card-head {
-          background-color: #fafafa;
-          border-bottom: none;
-          font-size: 14px;
-        }
-  
-        .ant-card-extra a {
-          color: #1890ff; /* Default Ant Design link color */
-          text-decoration: none;
-  
-          &:hover {
-            color: #40a9ff; /* Lighter blue on hover */
-          }
-        }
-      }
-    }
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
-  
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postedDate {
+  font-size: 12px;
+  color: #999;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Job Title and Location Button in Same Row */
+.jobHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jobTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.locationButton {
+  font-size: 12px;
+  border-radius: 22px;
+  border: 1px solid #ccc;
+  text-transform: none;
+  color: #333;
+  padding: 3px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.companyName {
+  font-size: 16px;
+  color: #007bff;
+}
+
+.salary {
+  font-size: 16px;
+  font-weight: bold;
+  color: #28a745;
+  margin-top: 5px;
+}
+
+.chipContainer {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.description {
+  font-size: 14px;
+  color: #555;
+  margin: 10px 0;
+}
+
+.shareMenu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.applyButton {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+
+.authModal {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90%;
+}

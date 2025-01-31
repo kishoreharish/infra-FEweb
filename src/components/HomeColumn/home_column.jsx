@@ -6,7 +6,7 @@ import FeaturedJobsCarousel from "../Featured_Jobs_carousel/featuredjobscarousel
 import ImageCarouselAds from "../ImageCarouselAds/image_carousel_ads";
 import ArticlePost from "../ArticlesPost/articles_post";
 import PaidPost from "../PaidPost/paidpost";
-import FullCard from "../FullCard/fullcard";
+import FullCardList from "../FullCard/fullcard";
 
 const HomeColumn = () => {
   return (
@@ -21,7 +21,7 @@ const HomeColumn = () => {
           <ImageCarouselAds />
           <ArticlePost />
           <PaidPost />
-          <FullCard />
+          <FullCardList />
         </div>
         <div className={styles.rightColumn}>
           <h4>Resume Builder</h4>
