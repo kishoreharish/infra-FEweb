@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./ManageJobs.module.scss";
-import { 
-  Typography, 
-  Box, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Button, 
-  MenuItem, 
+import {
+  Typography,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  MenuItem,
   Select,
-  CircularProgress
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Snackbar,
+  Alert
 } from "@mui/material";
-import JobDetails from "./JobDetials";
-import DeleteIcon from '@mui/icons-material/Delete';
-
+import JobDetails from "../ManageJobs/JobDetails"; // ✅ Correct import
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -25,7 +31,10 @@ const ManageJobs = () => {
   const [filter, setFilter] = useState("Last 6 Months");
   const [selectedJob, setSelectedJob] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [deleting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     fetchJobs();
@@ -35,14 +44,16 @@ const ManageJobs = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get("http://127.0.0.1:8000/users/jobs/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      console.log("Fetching employer jobs...", token);
+      
+      const response = await axios.get("http://127.0.0.1:8000/api/jobs/", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+
+      console.log("Jobs fetched successfully:", response.data);
       setJobs(response.data);
     } catch (error) {
-      console.error("Error fetching jobs:", error);
+      console.error("Error fetching jobs:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
@@ -50,26 +61,35 @@ const ManageJobs = () => {
 
   const handleViewJob = (job) => {
     setSelectedJob(job);
-    setOpenDialog(true);
+    setOpenDialog(true); // ✅ Open modal when View/Edit is clicked
   };
 
-  const handleDelete = async (jobId) => {
+  const handleDeleteConfirmation = (jobId) => {
+    setJobToDelete(jobId);
+    setConfirmDelete(true);
+  };
+
+  const handleDelete = async () => {
+    if (!jobToDelete) return;
+
     try {
       const token = localStorage.getItem("authToken");
-      await axios.delete(`http://127.0.0.1:8000/jobs/${jobId}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      setDeleting(true);
+
+      await axios.delete(`http://127.0.0.1:8000/api/jobs/${jobToDelete}/`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
-      setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
-      console.log("Job deleted successfully!");
+
+      setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobToDelete));
+      setSuccessMessage("Job deleted successfully!");
     } catch (error) {
       console.error("Error deleting job:", error.response?.data || error.message);
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(false);
+      setJobToDelete(null);
     }
   };
-  
-  
 
   return (
     <div className={styles.container}>
@@ -129,16 +149,13 @@ const ManageJobs = () => {
                     <TableCell>
                       <div className={styles.actionButtons}>
                         <Button onClick={() => handleViewJob(job)}>View/Edit</Button>
-                        {/* <IconButton 
-  onClick={() => handleDelete(job.id)} 
-  color="error" 
-  disabled={deleting}
->
-  <DeleteIcon />
-</IconButton> */}
-                        <Button onClick={() => handleDelete(job.id)} 
-  color="error" 
-  disabled={deleting}><DeleteIcon /></Button>
+                        <Button 
+                          onClick={() => handleDeleteConfirmation(job.id)} 
+                          color="error" 
+                          disabled={deleting}
+                        >
+                          <DeleteIcon />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -151,20 +168,47 @@ const ManageJobs = () => {
                 </TableRow>
               )}
             </TableBody>
-            {selectedJob && (
-              <JobDetails 
-                open={openDialog} 
-                onClose={() => setOpenDialog(false)} 
-                jobData={selectedJob} 
-                onSave={(updatedJob) => {
-                  setJobs((prevJobs) => prevJobs.map(j => j.id === updatedJob.id ? updatedJob : j));
-                  setOpenDialog(false);
-                }}
-              />
-            )}
           </Table>
         </TableContainer>
       )}
+
+      {/* JobDetails Modal */}
+      {selectedJob && (
+      <JobDetails
+      open={openDialog} 
+      onClose={() => setOpenDialog(false)} 
+      jobData={selectedJob} 
+      onSave={(updatedJob) => {
+        setJobs((prevJobs) => prevJobs.map(j => j.id === updatedJob.id ? updatedJob : j));
+        fetchJobs(); // ✅ Refresh job list
+      }}
+    />
+    
+     
+      )}
+
+      {/* Confirm Delete Dialog */}
+      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this job? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDelete(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error" disabled={deleting}>
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ✅ Snackbar for success message */}
+      <Snackbar open={!!successMessage} autoHideDuration={3000} onClose={() => setSuccessMessage(null)}>
+        <Alert onClose={() => setSuccessMessage(null)} severity="success">{successMessage}</Alert>
+      </Snackbar>
     </div>
   );
 };

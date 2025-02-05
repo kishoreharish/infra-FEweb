@@ -7,6 +7,7 @@ import MessageIcon from "@mui/icons-material/Message";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import LineChart from "./LineChart"; // A separate chart component
 import { applicants } from "./dummyData"; // Example data for recent applicants
+import EmployerSearchBar from "../../EmployerSearchBar/EmployerSearchBar";
 
 const EmployerDashboard = () => {
   return (
@@ -17,7 +18,7 @@ const EmployerDashboard = () => {
       <Typography variant="body2" color="textSecondary" className={styles.dashboardSubtitle}>
         Ready to jump back in?
       </Typography>
-
+<EmployerSearchBar />
       {/* Summary Cards */}
       <Grid container spacing={3} className={styles.summaryCards}>
         <Grid item xs={12} sm={3}>

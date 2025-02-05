@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { auth } from "../firebase/firebase-config";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import axios from "axios";
 
 export const AuthContext = createContext();
@@ -10,40 +10,43 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Ensure token is loaded from local storage
   useEffect(() => {
     const tokenFromStorage = localStorage.getItem("authToken");
+
     if (tokenFromStorage && !authToken) {
+      console.log("🔄 Restoring authToken from localStorage...");
       setAuthToken(tokenFromStorage);
     }
   }, []);
 
-  // ✅ Fetch User Data When Token is Available
   useEffect(() => {
     console.log("🔄 Checking Auth Token:", authToken);
+    console.log("🟢 User Data:", user);
 
     if (!authToken) {
+      console.log("⚠️ No Token Found, Skipping API Call");
       setLoading(false);
       return;
     }
 
-    axios
-      .get("http://127.0.0.1:8000/api/user-profile/", {
-        headers: { Authorization: `Bearer ${authToken}` },
-      })
-      .then(response => {
-        console.log("🟢 User Data:", response.data);
+    axios.get("http://127.0.0.1:8000/api/user-profile/", {
+      headers: { Authorization: `Bearer ${authToken}` },
+    })
+      .then((response) => {
+        console.log("🟢 User Data Loaded:", response.data);
         setUser(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("❌ Error fetching user:", error);
         setAuthToken(null);
         localStorage.removeItem("authToken");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        console.log("✅ Auth Check Completed");
+        setLoading(false);
+      });
   }, [authToken]);
 
-  // ✅ Login Function
   const login = async (email, password) => {
     try {
       const response = await axios.post("http://127.0.0.1:8000/api/login/", {
@@ -56,13 +59,14 @@ export const AuthProvider = ({ children }) => {
       }
 
       const data = response.data;
+      console.log("✅ Login Successful:", data.user);
+
       localStorage.setItem("authToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
 
       setAuthToken(data.access);
       setUser(data.user);
-      console.log("✅ Login Successful:", data.user);
-
+      
       return data.user;
     } catch (error) {
       console.error("❌ Login Error:", error);
@@ -70,35 +74,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Logout Function
   const logout = async () => {
     try {
-      await signOut(auth); // Firebase Signout
+      console.log("🚪 Logging Out...");
+
+      await signOut(auth); // Firebase Logout
+
       localStorage.removeItem("authToken");
       localStorage.removeItem("refreshToken");
 
       setAuthToken(null);
       setUser(null);
+
       console.log("✅ Successfully Logged Out");
     } catch (error) {
       console.error("❌ Logout Error:", error.message);
     }
   };
 
-  // ✅ AuthContext Value
-  const value = {
-    user,
-    authToken,
-    setUser,
-    setAuthToken,
-    login,
-    logout,
-    loading,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children} {/* Only render children after loading is complete */}
+    <AuthContext.Provider value={{ user, authToken, setUser, setAuthToken, login, logout }}>
+      {!loading && children} {/* Ensure content always renders */}
     </AuthContext.Provider>
   );
 };

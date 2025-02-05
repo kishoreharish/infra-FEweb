@@ -16,50 +16,53 @@ const MyJobs = () => {
   const { authToken, user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState(0);
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // ✅ Retrieve token from localStorage if Context token is missing
+  // ✅ Retrieve token from Context OR LocalStorage
   const token = authToken || localStorage.getItem("authToken");
 
   console.log("🔍 Checking Auth Token in MyJobs:", token);
   console.log("👤 User Data:", user);
 
   // ✅ API Endpoints for different job categories
-  const endpoints = [
-    "applied-jobs",
-    "saved-jobs",
-    "interviewed-jobs",
-    "achieved-jobs",
-  ];
+  const endpoints = {
+    0: "applied-jobs",
+    1: "saved-jobs",
+    2: "interviewed-jobs",
+    3: "achieved-jobs",
+  };
 
   // ✅ Fetch Jobs Function (Handles Auth & API Calls)
-  const fetchJobs = useCallback(async () => {
+  const fetchJobs = async () => {
+    const token = authToken || localStorage.getItem("authToken");
+
     if (!token) {
-      console.error("❌ No Auth Token Found. Please Log In.");
-      setError("❌ Unauthorized. Please log in again.");
-      setLoading(false);
-      return;
+        console.error("❌ No Auth Token Found.");
+        setError("❌ Unauthorized. Please log in again.");
+        setLoading(false);
+        return;
     }
 
-    setLoading(true);
     try {
-      console.log(`🚀 Fetching: http://127.0.0.1:8000/api/${endpoints[activeTab]}/`);
+        console.log(`🚀 Fetching: http://127.0.0.1:8000/api/${endpoints[activeTab]}/`);
+        console.log("🔍 Sending Token:", token);
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/${endpoints[activeTab]}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        const response = await axios.get(`http://127.0.0.1:8000/api/${endpoints[activeTab]}/`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-      console.log("✅ API Response:", response.data);
-      setJobs(response.data);
-      setError(null);
+        console.log("✅ API Response:", response.data);
+        setJobs(response.data);
+        setError(null);
     } catch (err) {
-      console.error("❌ Error fetching jobs:", err.response?.data || err.message);
-      setError("Failed to fetch jobs.");
+        console.error("❌ API Fetch Error:", err.response?.data || err.message);
+        setError("Failed to fetch jobs.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  }, [activeTab, token]);
+};
+
 
   // ✅ Fetch jobs when activeTab changes
   useEffect(() => {
@@ -68,7 +71,6 @@ const MyJobs = () => {
 
   return (
     <Box className={styles.container}>
-      <Typography variant="h4" className={styles.heading}>My Jobs</Typography>
 
       {/* ✅ Job Tabs */}
       <Tabs

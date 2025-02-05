@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -10,181 +10,184 @@ import {
   TextField,
   CircularProgress,
   Grid,
-} from '@mui/material';
+  Modal
+} from "@mui/material";
 import {
   Facebook,
   Twitter,
   LinkedIn,
   ContentCopy,
-} from '@mui/icons-material';
-import { useParams, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext'; // ✅ Import Auth Context
-import styles from './JobDetails.module.scss';
+  Close
+} from "@mui/icons-material";
+import { AuthContext } from "../../contexts/AuthContext"; // ✅ Import Auth Context
+import styles from "./JobDetails.module.scss";
 
-const JobDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
+const JobDetails = ({ open, onClose, jobData, onSave }) => {
+  const [job, setJob] = useState(jobData);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { authToken } = useContext(AuthContext);
-
-  // ✅ Ensure token is retrieved correctly
+  
   const token = authToken || localStorage.getItem("authToken");
 
+  // ✅ Update local state when jobData changes
   useEffect(() => {
-    const fetchJobDetails = async () => {
-      try {
-        console.log(`Fetching job details: http://127.0.0.1:8000/public/jobs/${id}/`);
-        const response = await axios.get(`http://127.0.0.1:8000/public/jobs/${id}/`);
-        setJob(response.data);
-      } catch (err) {
-        console.error("Error fetching job details:", err);
-        setError("Failed to load job details. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    setJob(jobData);
+  }, [jobData]);
 
-    fetchJobDetails();
-  }, [id]);
+  // ✅ Handle editing the job details
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setJob((prevJob) => ({ ...prevJob, [name]: value }));
+  };
 
-  // ✅ Function to handle job application
-  const handleApply = async () => {
+  // ✅ Save edited job details
+  const handleSave = async () => {
     if (!token) {
-      alert("You need to log in to apply for this job.");
-      navigate("/login");
+      alert("Unauthorized. Please log in.");
       return;
     }
 
+    setLoading(true);
     try {
-      console.log("Applying for job ID:", job?.id);
-      console.log("Using token:", token);
-
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/job-applications/",
-        { job_id: job.id },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/jobs/update/${job.id}/`,
+        job,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (response.status === 201 || response.status === 200) {
-        alert("You have successfully applied for this job!");
-        navigate("/dashboard");
+      if (response.status === 200) {
+        alert("Job updated successfully!");
+        onSave(job); // ✅ Update job in ManageJobs
+        onClose(); // ✅ Close modal
       } else {
-        alert("Something went wrong. Please try again.");
+        setError("Failed to update job. Try again.");
       }
     } catch (error) {
-      console.error("Error applying for job:", error);
-
-      if (error.response) {
-        if (error.response.status === 401) {
-          alert("Session expired. Please log in again.");
-          localStorage.removeItem("authToken");
-          navigate("/login");
-        } else if (error.response.status === 400) {
-          alert("You have already applied for this job.");
-        } else {
-          alert("Failed to apply. Please try again later.");
-        }
-      } else {
-        alert("Network error. Please check your connection.");
-      }
+      setError("Error updating job. Check console.");
+      console.error("Update Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ maxWidth: '1200px', margin: 'auto', padding: '20px' }}>
-      {loading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+    <Modal open={open} onClose={onClose}>
+      <Box className={styles.modalContainer}>
+        {loading ? (
           <CircularProgress />
-        </Box>
-      ) : error ? (
-        <Typography variant="h6" color="error" textAlign="center">
-          {error}
-        </Typography>
-      ) : job ? (
-        <div className={styles.container}>
-          {/* Header */}
-          <Box className={styles.header}>
-            <Typography variant="h3" className={styles.jobTitle}>
-              {job.title} <span className={styles.companyName}>at {job.company}</span>
-            </Typography>
-            <div className={styles.headerbtns}>
-              <Button variant="contained" className={styles.viewCompanyBtn}>
-                VIEW COMPANY
-              </Button>
-              <Button variant="contained" className={styles.applyJobBtn} onClick={handleApply}>
-                APPLY FOR THIS JOB
-              </Button>
-            </div>
-          </Box>
+        ) : error ? (
+          <Typography variant="h6" color="error">{error}</Typography>
+        ) : job ? (
+          <div className={styles.container}>
+            {/* Close Button */}
+            <IconButton className={styles.closeButton} onClick={onClose}>
+              <Close />
+            </IconButton>
 
-          <Grid container spacing={4}>
-            {/* Left Column */}
-            <Grid item xs={12} md={8}>
-              <Box className={styles.jobDetails}>
-                <Typography variant="h6" className={styles.sectionTitle}>About this role</Typography>
-                <Box className={styles.roleHeader}>
-                  <img src={`http://127.0.0.1:8000${job.company_logo}`} alt="Company Logo" className={styles.companyLogo} />
-                  <Box>
-                    <Typography variant="h6"><b>{job.title}</b> ({job.job_type})</Typography>
-                    <Typography className={styles.location}>{job.company} - {job.location}</Typography>
-                    <Typography className={styles.salary}>₹{job.salary} + Benefits</Typography>
-                  </Box>
-                </Box>
-
-                <Typography className={styles.description}>{job.description}</Typography>
-
-                <Typography variant="h6" className={styles.sectionTitle}>Skills</Typography>
-                <Box className={styles.skills}>
-                  {job.skills?.split(",").map((skill, i) => (
-                    <Chip label={skill.trim()} key={i} className={styles.skillChip} />
-                  ))}
-                </Box>
-              </Box>
-            </Grid>
-
-            {/* Right Column */}
-            <Grid item xs={12} md={4}>
-              <Box className={styles.rightColumn}>
-                <Button variant="contained" fullWidth className={styles.applyJobBtn} onClick={handleApply}>
+            {/* Header */}
+            <Box className={styles.header}>
+              <Typography variant="h4" className={styles.jobTitle}>
+                <TextField name="title" value={job.title} onChange={handleChange} fullWidth />
+              </Typography>
+              <div className={styles.headerbtns}>
+                <Button variant="contained" className={styles.viewCompanyBtn}>
+                  VIEW COMPANY
+                </Button>
+                <Button variant="contained" className={styles.applyJobBtn}>
                   APPLY FOR THIS JOB
                 </Button>
+              </div>
+            </Box>
 
-                <Divider sx={{ marginY: 3 }} />
+            <Grid container spacing={4}>
+              {/* Left Column */}
+              <Grid item xs={12} md={8}>
+                <Box className={styles.jobDetails}>
+                  <Typography variant="h6" className={styles.sectionTitle}>About this role</Typography>
+                  <Box className={styles.roleHeader}>
+                    <img src={`http://127.0.0.1:8000${job.company_logo}`} alt="Company Logo" className={styles.companyLogo} />
+                    <Box>
+                      <Typography variant="h6">
+                        <TextField name="job_type" value={job.job_type} onChange={handleChange} fullWidth />
+                      </Typography>
+                      <Typography className={styles.location}>
+                        <TextField name="location" value={job.location} onChange={handleChange} fullWidth />
+                      </Typography>
+                      <Typography className={styles.salary}>
+                        ₹<TextField name="salary" value={job.salary} onChange={handleChange} fullWidth /> + Benefits
+                      </Typography>
+                    </Box>
+                  </Box>
 
-                <Typography variant="h6" className={styles.sectionTitle}>Share this job</Typography>
-                <Box className={styles.shareButtons}>
-                  <Button variant="outlined" startIcon={<Facebook />} fullWidth sx={{ mb: 1 }}>
-                    Share on Facebook
-                  </Button>
-                  <Button variant="outlined" startIcon={<Twitter />} fullWidth sx={{ mb: 1 }}>
-                    Share on Twitter
-                  </Button>
-                  <Button variant="outlined" startIcon={<LinkedIn />} fullWidth>
-                    Share on LinkedIn
-                  </Button>
+                  <Typography className={styles.description}>
+                    <TextField
+                      name="description"
+                      value={job.description}
+                      onChange={handleChange}
+                      fullWidth
+                      multiline
+                      rows={4}
+                    />
+                  </Typography>
+
+                  <Typography variant="h6" className={styles.sectionTitle}>Skills</Typography>
+                  <TextField
+                    name="skills"
+                    value={job.skills}
+                    onChange={handleChange}
+                    fullWidth
+                  />
                 </Box>
+              </Grid>
 
-                <Divider sx={{ marginY: 3 }} />
+              {/* Right Column */}
+              <Grid item xs={12} md={4}>
+                <Box className={styles.rightColumn}>
+                  <Button variant="contained" fullWidth className={styles.applyJobBtn}>
+                    APPLY FOR THIS JOB
+                  </Button>
 
-                <Typography variant="h6" className={styles.sectionTitle}>Job URL</Typography>
-                <Box className={styles.jobUrlBox} display="flex" alignItems="center">
-                  <TextField value={`http://digitalprofile.io/job/${job.id}`} fullWidth disabled />
-                  <IconButton className={styles.copyButton} onClick={() => navigator.clipboard.writeText(`http://digitalprofile.io/job/${job.id}`)}>
-                    <ContentCopy />
-                  </IconButton>
+                  <Divider sx={{ marginY: 3 }} />
+
+                  <Typography variant="h6" className={styles.sectionTitle}>Share this job</Typography>
+                  <Box className={styles.shareButtons}>
+                    <Button variant="outlined" startIcon={<Facebook />} fullWidth sx={{ mb: 1 }}>
+                      Share on Facebook
+                    </Button>
+                    <Button variant="outlined" startIcon={<Twitter />} fullWidth sx={{ mb: 1 }}>
+                      Share on Twitter
+                    </Button>
+                    <Button variant="outlined" startIcon={<LinkedIn />} fullWidth>
+                      Share on LinkedIn
+                    </Button>
+                  </Box>
+
+                  <Divider sx={{ marginY: 3 }} />
+
+                  <Typography variant="h6" className={styles.sectionTitle}>Job URL</Typography>
+                  <Box className={styles.jobUrlBox} display="flex" alignItems="center">
+                    <TextField value={`http://digitalprofile.io/job/${job.id}`} fullWidth disabled />
+                    <IconButton className={styles.copyButton} onClick={() => navigator.clipboard.writeText(`http://digitalprofile.io/job/${job.id}`)}>
+                      <ContentCopy />
+                    </IconButton>
+                  </Box>
                 </Box>
-              </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      ) : (
-        <Typography variant="h6" textAlign="center">No job details found</Typography>
-      )}
-    </Box>
+
+            {/* Save Button */}
+            <Box className={styles.buttonContainer}>
+              <Button variant="contained" color="primary" onClick={handleSave}>
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+            </Box>
+          </div>
+        ) : (
+          <Typography variant="h6" textAlign="center">No job details found</Typography>
+        )}
+      </Box>
+    </Modal>
   );
 };
 
