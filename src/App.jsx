@@ -82,7 +82,7 @@ const App = () => {
         {/* <Route path="/" element={<FullCardList />} /> */}
         <Route path="/" element={<FullCardList />} />
 
-        <Route path="/job-details/:id" element={<JobDetails />} />
+        <Route path="/job-details/:jobId" element={<JobDetails />} />
         <Route
           path="/candidate-profile"
           element={

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Spin, Alert, Card, Tabs, Avatar } from "antd";
+import { Spin, Alert, Card, Tabs, Avatar, message } from "antd";
 import { UserOutlined, PhoneOutlined, MailOutlined } from "@ant-design/icons";
 import styles from "./CandidateProfile.module.scss";
 import ProfileHome from "./ProfileHome/ProfileHome";
 import MyProfile from "./MyProfile/MyProfile";
 import MyResume from "./MyResume/MyResume";
 import MyJobs from "../Jobs/MyJobs";
+import axiosInstance from "../../utils/axiosInstance"; // ✅ Import axios instance with auto-refresh
 
 const { TabPane } = Tabs;
 
@@ -18,24 +19,8 @@ const CandidateProfile = () => {
   // Fetch user data on component mount
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("authToken");
-
-      if (!token) {
-        setError("Authentication error. Please log in.");
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/users/candidate/profile/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
+        const response = await axiosInstance.get("users/candidate/profile/");
         if (response.status === 200) {
           setUserData(response.data);
         } else {
@@ -43,10 +28,7 @@ const CandidateProfile = () => {
         }
       } catch (err) {
         console.error("API Error:", err.response || err.message);
-        setError(
-          err.response?.data?.error ||
-            "An error occurred while fetching profile data."
-        );
+        setError("An error occurred while fetching profile data.");
       } finally {
         setLoading(false);
       }
@@ -54,6 +36,31 @@ const CandidateProfile = () => {
 
     fetchProfile();
   }, []);
+
+  // Function to handle profile update
+  const handleProfileUpdate = async (updatedData) => {
+    try {
+      const response = await axiosInstance.post(
+        "users/candidate/profile/update/",
+        updatedData
+      );
+
+      if (response.status === 200) {
+        message.success("Profile updated successfully!");
+        setUserData(response.data);
+
+        // If a new token is returned, update localStorage
+        if (response.data.authToken) {
+          localStorage.setItem("authToken", response.data.authToken);
+        }
+      } else {
+        message.error("Failed to update profile.");
+      }
+    } catch (err) {
+      console.error("Update Error:", err.response || err.message);
+      message.error("An error occurred while updating profile.");
+    }
+  };
 
   if (loading) {
     return (
@@ -76,11 +83,7 @@ const CandidateProfile = () => {
       <Card className={styles.profileCard}>
         {/* Avatar and Basic Information */}
         <div className={styles.profileHeader}>
-          <Avatar
-            size={100}
-            icon={<UserOutlined />}
-            src={userData.avatar || ""}
-          />
+          <Avatar size={100} icon={<UserOutlined />} src={userData.avatar || ""} />
           <h2>{userData.full_name || "Candidate Name"}</h2>
           <p>{userData.title || "Candidate Title"}</p>
         </div>
@@ -103,8 +106,8 @@ const CandidateProfile = () => {
         </TabPane>
 
         <TabPane tab="My Profile" key="2">
-          <MyProfile userData={userData} />
-          
+          {/* Pass `handleProfileUpdate` to `MyProfile` */}
+          <MyProfile userData={userData} onUpdateProfile={handleProfileUpdate} />
         </TabPane>
 
         <TabPane tab="My Resume" key="3">
@@ -115,7 +118,6 @@ const CandidateProfile = () => {
           <div className={styles.tabContent}>
             <h3>My Jobs</h3>
             <MyJobs />
-            {/* <p>{userData.jobs || "No job applications found."}</p> */}
           </div>
         </TabPane>
       </Tabs>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../../utils/axiosInstance"; // ✅ Auto-refresh token
 import styles from "./EditProfile.module.scss";
 
 const EditProfile = ({ userData, onClose, onSave }) => {
@@ -29,7 +29,7 @@ const EditProfile = ({ userData, onClose, onSave }) => {
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false); // Track successful save
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,37 +42,28 @@ const EditProfile = ({ userData, onClose, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      setError("You must be logged in to update your profile.");
-      return;
-    }
-
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/users/candidate/update-profile/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
+      const response = await axiosInstance.post(
+        "users/candidate/update-profile/",
+        formData
       );
 
-      if (!response.ok) {
-        throw new Error(`Failed to save profile. Status: ${response.status}`);
-      }
+      if (response.status === 200 && response.data.message === "Profile updated successfully!") {
+        setSuccess(true);
 
-      const result = await response.json();
-      console.log("Profile updated successfully:", result);
-      setSuccess(true); // Set success to true
-      onSave(formData); // Trigger save callback
+        // ✅ Pass the updated profile data to both MyProfile & CandidateProfile
+        onSave(response.data.userData);  
+
+        // ✅ Save new token if returned
+        if (response.data.authToken) {
+          localStorage.setItem("authToken", response.data.authToken);
+        }
+      } else {
+        setError("Unexpected response format. Profile updated, but check logs.");
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
-      setError("Failed to save profile. Please try again.");
+      setError(error.response?.data?.error || "Failed to save profile. Please try again.");
     }
   };
 
@@ -94,176 +85,27 @@ const EditProfile = ({ userData, onClose, onSave }) => {
         {!success && (
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.scrollableContainer}>
-              <div className={styles.formGroup}>
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  name="full_name"
-                  value={formData.full_name}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Gender</label>
-                <input
-                  type="text"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Date of Birth</label>
-                <input
-                  type="date"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Phone Number</label>
-                <input
-                  type="text"
-                  name="phone_number"
-                  value={formData.phone_number}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>About</label>
-                <textarea
-                  name="about"
-                  value={formData.about}
-                  onChange={handleChange}
-                ></textarea>
-              </div>
-              <div className={styles.formGroup}>
-                <label>Interest</label>
-                <input
-                  type="text"
-                  name="interest"
-                  value={formData.interest}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Languages</label>
-                <input
-                  type="text"
-                  name="languages"
-                  value={formData.languages}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Skills</label>
-                <input
-                  type="text"
-                  name="skills"
-                  value={formData.skills}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Technical Skills</label>
-                <input
-                  type="text"
-                  name="technical_skills"
-                  value={formData.technical_skills}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Education</label>
-                <input
-                  type="text"
-                  name="education"
-                  value={formData.education}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Experience</label>
-                <input
-                  type="text"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Address Line 1</label>
-                <input
-                  type="text"
-                  name="address_line1"
-                  value={formData.address_line1}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Address Line 2</label>
-                <input
-                  type="text"
-                  name="address_line2"
-                  value={formData.address_line2}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>City</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>State</label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Pincode</label>
-                <input
-                  type="text"
-                  name="pincode"
-                  value={formData.pincode}
-                  onChange={handleChange}
-                />
-              </div>
+              {Object.keys(formData).map((field, index) => (
+                <div key={index} className={styles.formGroup}>
+                  <label>{field.replace(/_/g, " ")}</label>
+                  <input
+                    type="text"
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
             </div>
             <div className={styles.formActions}>
-              <button type="button" onClick={onClose}>
-                Cancel
-              </button>
+              <button type="button" onClick={onClose}>Cancel</button>
               <button type="submit">Save</button>
             </div>
           </form>
         )}
         {success && (
           <div className={styles.formActions}>
-            <button className={styles.editButton}
-              type="button"
-              onClick={() => {
-                onClose();
-                window.location.reload();
-              }}
-            >
+            <button className={styles.editButton} type="button" onClick={onClose}>
               Close
             </button>
           </div>

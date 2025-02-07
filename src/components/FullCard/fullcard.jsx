@@ -19,15 +19,16 @@ const FullCardList = () => {
   const [error, setError] = useState(null);
   const [shareMenu, setShareMenu] = useState(null); // Track which job's share menu is open
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState(null);
   const navigate = useNavigate();
   const { authToken, user } = useContext(AuthContext);
-
 
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/public/jobs/")
-      .then((response) => setJobs(response.data))
+      .then((response) => {
+        console.log("🟢 Fetched Jobs:", response.data);
+        setJobs(response.data);
+      })
       .catch(() => setError("Failed to load jobs."))
       .finally(() => setLoading(false));
 
@@ -46,11 +47,6 @@ const FullCardList = () => {
       setSavedJobs(savedJobIds);
     } catch (err) {
       console.error("Error fetching saved jobs:", err);
-      console.log("🟢 Checking User & Token in FullCardList:");
-console.log("User:", user);
-console.log("AuthToken:", authToken);
-console.log("LocalStorage Token:", localStorage.getItem("authToken"));
-
     }
   };
 
@@ -82,11 +78,10 @@ console.log("LocalStorage Token:", localStorage.getItem("authToken"));
     }
   };
   
-  
-
-  // ✅ Handle "View Details" Click
-  const handleViewDetails = (jobId) => {
-    navigate(`/job-details/${jobId}`);
+  // ✅ Navigate to Job Details with `jobData`
+  const handleViewDetails = (job) => {
+    console.log("🟢 Navigating to job details:", job);
+    navigate(`/job-details/${job.id}`, { state: { jobData: job } });
   };
 
   // ✅ Handle Copy Link
@@ -168,7 +163,7 @@ console.log("LocalStorage Token:", localStorage.getItem("authToken"));
           <Button
             variant="contained"
             className={styles.applyButton}
-            onClick={() => handleViewDetails(job.id)}
+            onClick={() => handleViewDetails(job)}
           >
             View Details
           </Button>

@@ -1,148 +1,79 @@
-.container {
-    max-width: 1200px;
-    margin: auto;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .header {
-    background-color: #2ea3f2;
-    padding: 40px;
-    color: #fff;
-    text-align: center;
-    align-content: center;
-    border-radius: 8px 8px 0 0;
-    height: 300px;
-  }
-  
-  .headerbtns {
-    display: flex;
-    gap: 20px;
-    justify-content: center;  // Center horizontally
-  }
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
 
-  .jobTitle {
-    font-size: 2rem;
-    font-weight: bold;
-    padding-bottom: 20px;
-  }
-  
-  .companyName {
-    color: #c8f000;
-    
-  }
-  
-  .jobDescription {
-    margin: 10px 0;
-    font-size: 1.1rem;
-  }
-  
-  .actionButtons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  .viewCompanyBtn, .applyJobBtn {
-    background-color: #fff;
-    color: #2ea3f2;
-    font-weight: bold;
-    border-radius: 6px;
-    padding: 10px 20px;
-    margin-top: 20px;
-  }
-  
-  .jobDetails {
-    padding: 40px;
-  }
-  
-  .sectionTitle {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333;
-  }
-  
-  .roleHeader {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .companyLogo {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-  }
-  
-  .location, .salary {
-    font-size: 1rem;
-    color: #666;
-  }
-  
-  .description {
-    font-size: 1rem;
-    color: #444;
-    line-height: 1.6;
-  }
-  
-  .skills, .benefits {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .skillChip, .benefitChip {
-    background-color: #f0f0f0;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .locationDetails {
-    font-size: 1rem;
-    margin-bottom: 10px;
-  }
-  
-  .mapImage {
-    width: 100%;
-    border-radius: 8px;
-  }
-  
-  .viewOnMap {
-    color: #2ea3f2;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .divider {
-    margin: 40px 0;
-  }
-  
-  .shareButtons {
-    display: flex;
-    margin-bottom: 20px;
-    flex-direction: column;
-  gap: 5px;  // Adjust the gap between buttons as needed
-  }
-  
-  .jobUrlBox {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .copyButton {
-    background-color: #2ea3f2;
-    color: #fff;
-    border-radius: 6px;
-  }
-  
-  .rightColumn {
-    padding: 20px;
-  }
-  
- 
+.jobContainer {
+  width: 80%;
+  max-width: 1200px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.headerBackground {
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(to right, #7d00ff, #ff5400);
+  border-radius: 10px;
+  margin-bottom: -50px;
+}
+
+.jobDetails {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: -20px;
+}
+
+.jobHeader {
+  text-align: left;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.divider {
+  margin: 20px 0;
+}
+
+.skillsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skillChip {
+  background: #e0e0e0;
+}
+
+.sidebar {
+  position: absolute;
+  right: 20px;
+  top: 80px;
+  width: 250px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.salary {
+  font-weight: bold;
+  color: #000;
+}
+
+.applyButton {
+  background: #ff5400;
+  color: #fff;
+}
+
+.companyInfo {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}

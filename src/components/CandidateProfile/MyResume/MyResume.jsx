@@ -3,13 +3,14 @@ import styles from "./MyResume.module.scss";
 import { Avatar } from "antd";
 
 const MyResume = ({ userData }) => {
-  const certifications = userData?.certifications || ["No certifications available"];
-  const educations = userData?.education || ["No educations available"];
-  const experiences = userData?.experience || ["No experiences available"];
-  const awards = userData?.awards || [];
-  const professionalSkills = userData?.professionalSkills || [];
-  const technicalSkills = userData?.technicalSkills || [];
-  const references = userData?.references || [];
+  // ✅ Ensure all these fields are arrays before mapping
+  const certifications = Array.isArray(userData?.certifications) ? userData.certifications : [];
+  const educations = Array.isArray(userData?.education) ? userData.education : [];
+  const experiences = Array.isArray(userData?.experience) ? userData.experience : [];
+  const awards = Array.isArray(userData?.awards) ? userData.awards : [];
+  const professionalSkills = Array.isArray(userData?.professionalSkills) ? userData.professionalSkills : [];
+  const technicalSkills = Array.isArray(userData?.technicalSkills) ? userData.technicalSkills : [];
+  const references = Array.isArray(userData?.references) ? userData.references : [];
   const description = userData?.description || "No description available.";
 
   return (
@@ -37,61 +38,68 @@ const MyResume = ({ userData }) => {
           {/* Certifications */}
           <section>
             <h3>Professional Certifications</h3>
-            <ul>
-              {certifications.map((cert, index) => (
-                <li key={index}>{cert}</li>
-              ))}
-            </ul>
+            {certifications.length > 0 ? (
+              <ul>
+                {certifications.map((cert, index) => (
+                  <li key={index}>{cert}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No certifications available.</p>
+            )}
             <hr />
           </section>
 
           {/* Education */}
           <section>
             <h3>Education</h3>
-            {Array.isArray(educations) ? (
-    educations.map((edu, index) => (
-      <div key={index}>
-        <h4>
-          {edu.degree} / {edu.major} <span>{edu.year}</span>
-        </h4>
-        <p>{edu.description}</p>
-        {index < educations.length - 1 && <hr />}
-      </div>
-    ))
-  ) : (
-    <p>No education information available</p>
-  )}
+            {educations.length > 0 ? (
+              educations.map((edu, index) => (
+                <div key={index}>
+                  <h4>
+                    {edu.degree} / {edu.major} <span>{edu.year}</span>
+                  </h4>
+                  <p>{edu.description}</p>
+                  {index < educations.length - 1 && <hr />}
+                </div>
+              ))
+            ) : (
+              <p>No education information available.</p>
+            )}
             <hr />
           </section>
 
           {/* Work Experience */}
           <section>
             <h3>Work Experiences</h3>
-            {Array.isArray(experiences) ? (
-    experiences.map((exp, index) => (
-      <div key={index}>
-        <h4>
-          {exp.position} at {exp.company} <span>{exp.year}</span>
-        </h4>
-        <p>{exp.description}</p>
-        {index < experiences.length - 1 && <hr />}
-      </div>
-    ))
-  ) : (
-    <p>No work experience available</p>
-  )}
-            
+            {experiences.length > 0 ? (
+              experiences.map((exp, index) => (
+                <div key={index}>
+                  <h4>
+                    {exp.position} at {exp.company} <span>{exp.year}</span>
+                  </h4>
+                  <p>{exp.description}</p>
+                  {index < experiences.length - 1 && <hr />}
+                </div>
+              ))
+            ) : (
+              <p>No work experience available.</p>
+            )}
             <hr />
           </section>
 
           {/* Awards */}
           <section>
             <h3>Awards</h3>
-            <ul>
-              {awards.map((award, index) => (
-                <li key={index}>{award}</li>
-              ))}
-            </ul>
+            {awards.length > 0 ? (
+              <ul>
+                {awards.map((award, index) => (
+                  <li key={index}>{award}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No awards available.</p>
+            )}
           </section>
         </div>
 
@@ -101,31 +109,43 @@ const MyResume = ({ userData }) => {
           <section>
             <h3>Skills</h3>
             <h4>Professional Skills</h4>
-            <ul>
-              {professionalSkills.map((skill, index) => (
-                <li key={index}>{skill}</li>
-              ))}
-            </ul>
+            {professionalSkills.length > 0 ? (
+              <ul>
+                {professionalSkills.map((skill, index) => (
+                  <li key={index}>{skill}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No professional skills available.</p>
+            )}
             <h4>Technical Skills</h4>
-            <ul>
-              {technicalSkills.map((skill, index) => (
-                <li key={index}>{skill}</li>
-              ))}
-            </ul>
+            {technicalSkills.length > 0 ? (
+              <ul>
+                {technicalSkills.map((skill, index) => (
+                  <li key={index}>{skill}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No technical skills available.</p>
+            )}
           </section>
 
           {/* References */}
           <section>
             <h3>References</h3>
-            {references.map((ref, index) => (
-              <div key={index}>
-                <p>{ref.name}</p>
-                <p>{ref.title}</p>
-                <p>{ref.phone}</p>
-                <p>{ref.email}</p>
-                {index < references.length - 1 && <hr />}
-              </div>
-            ))}
+            {references.length > 0 ? (
+              references.map((ref, index) => (
+                <div key={index}>
+                  <p>{ref.name}</p>
+                  <p>{ref.title}</p>
+                  <p>{ref.phone}</p>
+                  <p>{ref.email}</p>
+                  {index < references.length - 1 && <hr />}
+                </div>
+              ))
+            ) : (
+              <p>No references available.</p>
+            )}
           </section>
         </div>
       </div>

@@ -31,11 +31,12 @@ const AuthComponentsEmployer = ({ closeModal }) => {
           const response = await fetch("http://127.0.0.1:8000/users/social-login/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_token: idToken }),
+            body: JSON.stringify({ id_token: idToken, profile_type: "employer" }),
           });
           const data = await response.json();
           if (response.ok) {
             localStorage.setItem("authToken", data.access);
+            localStorage.setItem("refreshToken", data.refresh); // ✅ Store refreshToken
             localStorage.setItem("uid", data.user.id);
           } else {
             console.error("Login failed:", data);
@@ -45,6 +46,7 @@ const AuthComponentsEmployer = ({ closeModal }) => {
         }
       } else {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken"); // ✅ Clear refreshToken on logout
         localStorage.removeItem("uid");
       }
     });
@@ -72,22 +74,23 @@ const AuthComponentsEmployer = ({ closeModal }) => {
     try {
       const data = await apiCall(endpoint, "POST", { email, password });
 
-      // Save tokens and user data locally
-      localStorage.setItem("uid", data.user_id);
+      // ✅ Store both access and refresh tokens
       localStorage.setItem("authToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+      localStorage.setItem("uid", data.user_id);
 
-      // Update AuthContext to trigger TopBar re-render
+      // ✅ Update AuthContext to trigger UI updates
       setUser({
         id: data.user_id,
         username: data.username || "User",
         role: "employer",
-        photoURL: data.avatar || "", // Optional, based on API response
+        photoURL: data.avatar || "",
       });
 
-      // Navigate to employer profile
+      // ✅ Redirect to employer profile
       navigate("/employer-profile");
 
-      // Close modal
+      // ✅ Close modal
       closeModal?.();
     } catch (error) {
       setError(error.message);
@@ -103,6 +106,7 @@ const AuthComponentsEmployer = ({ closeModal }) => {
       });
 
       if (data.access) {
+        // ✅ Store both access and refresh tokens after signup
         localStorage.setItem("authToken", data.access);
         localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("uid", data.user_id);
@@ -118,10 +122,10 @@ const AuthComponentsEmployer = ({ closeModal }) => {
         photoURL: data.avatar || "",
       });
 
-      // Redirect to employer profile
+      // ✅ Redirect to employer profile
       navigate("/employer-profile");
 
-      // Close modal
+      // ✅ Close modal
       closeModal?.();
     } catch (error) {
       setError(error.message);
@@ -142,7 +146,6 @@ const AuthComponentsEmployer = ({ closeModal }) => {
           <div className={styles.authContent}>
             <h2>Login As Employer</h2>
             <p>Enter your email and password to log in</p>
-
             {error && <p className={styles.errorText}>{error}</p>}
             <input
               type="email"
@@ -167,7 +170,6 @@ const AuthComponentsEmployer = ({ closeModal }) => {
           <div className={styles.authContent}>
             <h2>Sign Up As Employer</h2>
             <p>Create an account</p>
-
             {error && <p className={styles.errorText}>{error}</p>}
             <input
               type="email"
@@ -206,7 +208,7 @@ const AuthComponentsEmployer = ({ closeModal }) => {
   );
 };
 
-// Social Login Component
+// ✅ Social Login Component (Ensures token storage for social logins)
 const SocialLogin = ({ closeModal, setError }) => {
   const handleSocialLogin = async (provider, providerName) => {
     try {
@@ -225,6 +227,7 @@ const SocialLogin = ({ closeModal, setError }) => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("authToken", data.access);
+        localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("uid", data.user.id);
         window.location.href = "/employer-profile";
       } else {

@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { auth } from "../firebase/firebase-config";
 import { signOut } from "firebase/auth";
 import axios from "axios";
+import axiosInstance from "../utils/axiosInstance"; 
 
 export const AuthContext = createContext();
 
@@ -9,6 +10,36 @@ export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+    // ✅ Fetch user data from token on app load
+    useEffect(() => {
+      const fetchUser = async () => {
+        const token = localStorage.getItem("authToken");
+  
+        if (!token) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+  
+        try {
+          const response = await axiosInstance.get("/users/profile/");
+          if (response.status === 200) {
+            setUser(response.data);
+          } else {
+            setUser(null);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setUser(null);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchUser();
+    }, []);
+    
 
   useEffect(() => {
     const tokenFromStorage = localStorage.getItem("authToken");

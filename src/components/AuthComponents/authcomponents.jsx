@@ -36,6 +36,7 @@ const AuthComponents = ({ closeModal }) => {
           const data = await response.json();
           if (response.ok) {
             localStorage.setItem("authToken", data.access);
+            localStorage.setItem("refreshToken", data.refresh); // ✅ Store refreshToken
             localStorage.setItem("uid", data.user.id);
           } else {
             console.error("Login failed:", data);
@@ -45,6 +46,7 @@ const AuthComponents = ({ closeModal }) => {
         }
       } else {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("refreshToken"); // ✅ Clear refreshToken on logout
         localStorage.removeItem("uid");
       }
     });
@@ -72,11 +74,12 @@ const AuthComponents = ({ closeModal }) => {
     try {
       const data = await apiCall(endpoint, "POST", { email, password, profile_type: "candidate" });
 
-      // Save tokens and user data locally
-      localStorage.setItem("uid", data.user_id);
+      // ✅ Store both access and refresh tokens
       localStorage.setItem("authToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+      localStorage.setItem("uid", data.user_id);
 
-      // Update AuthContext to trigger TopBar re-render
+      // ✅ Update AuthContext to trigger UI updates
       setUser({
         id: data.user_id,
         username: data.username || "User",
@@ -84,10 +87,10 @@ const AuthComponents = ({ closeModal }) => {
         photoURL: data.avatar || "",
       });
 
-      // Navigate to candidate home page
+      // ✅ Redirect to home page
       navigate("/home");
 
-      // Close modal
+      // ✅ Close modal
       closeModal?.();
     } catch (error) {
       setError(error.message);
@@ -103,6 +106,7 @@ const AuthComponents = ({ closeModal }) => {
       });
 
       if (data.access) {
+        // ✅ Store both access and refresh tokens after signup
         localStorage.setItem("authToken", data.access);
         localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("uid", data.user_id);
@@ -118,10 +122,10 @@ const AuthComponents = ({ closeModal }) => {
         photoURL: data.avatar || "",
       });
 
-      // Redirect to candidate home page
+      // ✅ Redirect to home page
       navigate("/home");
 
-      // Close modal
+      // ✅ Close modal
       closeModal?.();
     } catch (error) {
       setError(error.message);
@@ -204,7 +208,7 @@ const AuthComponents = ({ closeModal }) => {
   );
 };
 
-// Social Login Component
+// ✅ Social Login Component (Ensures token storage for social logins)
 const SocialLogin = ({ closeModal, setError }) => {
   const handleSocialLogin = async (provider, providerName) => {
     try {
@@ -223,6 +227,7 @@ const SocialLogin = ({ closeModal, setError }) => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("authToken", data.access);
+        localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("uid", data.user.id);
         window.location.href = "/home";
       } else {
